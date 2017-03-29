@@ -82,14 +82,94 @@ text.hover {
 }
 
 
+.d3-context-menu {
+	position: absolute;
+	display: none;
+	background-color: #f2f2f2;
+	border-radius: 4px;
+
+	font-family: Arial, sans-serif;
+	font-size: 14px;
+	min-width: 150px;
+	border: 1px solid #d4d4d4;
+
+	z-index:1200;
+}
+
+.d3-context-menu ul {
+	list-style-type: none;
+	margin: 4px 0px;
+	padding: 0px;
+	cursor: default;
+}
+
+.d3-context-menu ul li {
+	padding: 4px 16px;
+}
+
+.d3-context-menu ul li:hover {
+	background-color: #4677f8;
+	color: #fefefe;
+}
+
+#container{ border:1px solid red; background: transparent;}
 
 
 </style>
 <body>
+<div id="container"></div>
+
 <script src="//d3js.org/d3.v3.min.js"></script>
 
 <script>
-window.addEventListener('resize', resize);
+
+
+function makeD3()
+{
+
+
+d3.contextMenu = function (menu, openCallback) {
+
+	// create the div element that will hold the context menu
+	d3.selectAll('.d3-context-menu').data([1])
+		.enter()
+		.append('div')
+		.attr('class', 'd3-context-menu');
+
+	// close menu
+	d3.select('body').on('click.d3-context-menu', function() {
+		d3.select('.d3-context-menu').style('display', 'none');
+	});
+
+	// this gets executed when a contextmenu event occurs
+	return function(data, index) {	
+		var elm = this;
+
+		d3.selectAll('.d3-context-menu').html('');
+		var list = d3.selectAll('.d3-context-menu').append('ul');
+		list.selectAll('li').data(menu).enter()
+			.append('li')
+			.html(function(d) {
+				return d.title;
+			})
+			.on('click', function(d, i) {
+				d.action(elm, data, index);
+				d3.select('.d3-context-menu').style('display', 'none');
+			});
+
+		// the openCallback allows an action to fire before the menu is displayed
+		// an example usage would be closing a tooltip
+		if (openCallback) openCallback(data, index);
+
+		// display context menu
+		d3.select('.d3-context-menu')
+			.style('left', (d3.event.pageX - 2) + 'px')
+			.style('top', (d3.event.pageY - 2) + 'px')
+			.style('display', 'block');
+
+		d3.event.preventDefault();
+	};
+};
 
 
 d3.selection.prototype.moveToFront = function() {
@@ -114,7 +194,25 @@ var width = 960,
     fontSize = 12,
     boundingRadius = 20
 
-
+	var menu = [
+			{
+				title: 'Add sub node',
+				action: function(elm, d, i) {
+					console.log('Item #1 clicked!');
+					console.log('The data for this circle is: ' + d);
+				}
+			},
+			{
+				title: 'Remove node',
+				action: function(elm, d, i) {
+					console.log('You have clicked the second item!');
+					console.log('The data for this circle is: ' + d);
+				}
+			}
+		]
+		
+		
+		
 
 
 var root = {
@@ -219,10 +317,13 @@ var force = d3.layout.force()
 
 
 
-var svg = d3.select("body").append("svg")
+var svg = d3.selectAll("div#container").insert("svg")
     .attr("width", width)
     .attr("height", height);
-
+    
+    
+    d3.selectAll("div#container").on('contextmenu', d3.contextMenu(menu));
+    
 var link = svg.selectAll(".link"),
     node = svg.selectAll(".node");
 
@@ -231,12 +332,15 @@ var link = svg.selectAll(".link"),
 var rootNodes = findRootNodes(root);
 
 
-
 update(root)
 collapse(rootNodes);
 update(root)
 
-function resize() {
+function resize(e) {
+
+console.log( this );
+
+
     width = window.innerWidth * 0.9, height = window.innerHeight * 0.9;
     svg.attr("width", width).attr("height", height);
     force.size([width, height]).resume();
@@ -255,9 +359,9 @@ var flroot;
 function update(root) {
 
 
-
     var nodes = flatten(root),
-        links = d3.layout.tree().links(nodes);
+        links = d3.layout.tree().links(nodes)
+            
 
     flroot = nodes;
 
@@ -280,11 +384,15 @@ function update(root) {
     // Update links.
     link = link.data(links, function(d) {
         return d.target.id;
-    });
+    })
+    
 
     link.exit().remove();
 
-    link.enter().insert("line", ".node").attr("class", "link");
+    link.enter().insert("line", ".node")
+    .attr("class", "link")
+            .style("stroke-width", function(d) { return Math.sqrt(d.value); })
+            .attr("marker-end", "url(#end)");
 
     // Update nodes.
     node = node.data(nodes, function(d) {
@@ -346,6 +454,8 @@ function update(root) {
 
 
     var anchors = d3.selectAll('g > a');
+    
+    a.on('contextmenu', d3.contextMenu(menu));
 
     anchors[0].forEach(function(elem) {
     
@@ -761,8 +871,13 @@ function mouseout(e) {
 
 }
 
+}
+
+makeD3();
+
 </script> 
 
 
 </body>
+
 </html>
