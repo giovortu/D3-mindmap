@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.link {
+
+    fill: none;
+    stroke: #666;
+    stroke-width: 1.5px;
+    pointer-events: none;
+}
+
+
+rect  {
+
+    fill:#ffffff;
+    stroke:#45454a;
+    stroke-width:3px;
+
+}
+
+rect.hover {
+
+    fill:#ff4d4a;
+    stroke:#45454a;
+    stroke-width:0px;
+}
+
+text {
+
+    
+    font-family:sans-serif;
+    font-weight:bold;
+    pointer-events: none;
+    fill:#000000;
+    stroke-width:0px;
+    cursor:hand;  
+
+  
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+
+
+
+text.hover {
+
+    font-weight:bold;
+    pointer-events: none;
+    fill:#ffffff;
+    stroke-width:0px;
+    cursor:hand;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+
+.parent {
+    stroke:#00ff00;
+}
+
+
+.leaf {
+    stroke:#00ffff;
+
+}
+
+
+
+
+
+.hyperlink {
+
+    font-style:italic;
+    fill:#ff4d4a;
+}
+
+
+
+
+</style>
+<body>
+<script src="//d3js.org/d3.v3.min.js"></script>
+
+<script>
+window.addEventListener('resize', resize);
+
+
+d3.selection.prototype.moveToFront = function() {
+    return this.each(function() {
+        this.parentNode.appendChild(this);
+    });
+};
+
+
+var width = 960,
+    height = 500,
+    root = null,
+    rectWidth = 120,
+    rectHeight = 20,
+    radius = 15,
+    textXMargin = 10,
+    textYMargin = 10,
+    boxRadius = 20,
+    zoom = 1.3,
+    animInTime = 200,
+    animOutTime = 700,
+    fontSize = 12,
+    boundingRadius = 20
+
+
+
+
+var root = {
+    "name": "flare",
+    "url": "http://google.com",
+    "children": [{
+            "name": "analytics",
+            "children": [{
+                    "name": "cluster",
+                    "url": "http://google.com",
+                    "children": [{
+                            "name": "AgglomerativeCluster",
+                            "url": "http://google.com"
+                        },
+                        {
+                            "name": "CommunityStructure",
+                            "url": "http://google.com"
+                        },
+                        {
+                            "name": "Structure",
+                            "url": "http://google.com"
+                        },
+                        {
+                            "name": "Community",
+                            "url": "http://google.com"
+                        },
+                        {
+                            "name": "HierarchicalCluster",
+                            "url": "http://google.com"
+                        },
+                        {
+                            "name": "MergeEdge",
+                            "url": "http://google.com"
+                        }
+                    ]
+                },
+                {
+                            "name": "Boh",
+                            "url": "http://google.com"
+                    },
+                {
+                    "name": "graph",
+                    "url": "http://google.com",
+                    "children": [{
+                            "name": "BetweennessCentrality",
+                            "url": "http://google.com"
+                        },
+                        {
+                            "name": "LinkDistance",
+                            "url": "http://google.com"
+                        },
+                        {
+                            "name": "MaxFlowMinCut",
+                            "url": "http://google.com"
+                        },
+                        {
+                            "name": "ShortestPaths",
+                            "url": "http://google.com"
+                        },
+                        {
+                            "name": "SpanningTree",
+                            "url": "http://google.com"
+                        }
+                    ]
+                },
+                {
+                    "name": "optimization",
+                    "url": "http://google.com",
+                    "children": [{
+                        "name": "AspectRatioBanker",
+                        "url": "http://google.com"
+                    }]
+                }
+            ]
+        }
+    ]
+};
+
+
+/*
+
+    // from file ...
+    
+d3.json("data.json", function(error, json) {
+  if (error) throw error;
+
+  root = json;
+  update();
+});
+
+*/
+
+
+
+
+var force = d3.layout.force()
+    .linkDistance(140)
+    .charge(-420)
+    .gravity(.065)
+    .size([width, height])
+    .on("tick", tick)
+
+
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+var link = svg.selectAll(".link"),
+    node = svg.selectAll(".node");
+
+
+
+var rootNodes = findRootNodes(root);
+
+
+
+update(root)
+collapse(rootNodes);
+update(root)
+
+function resize() {
+    width = window.innerWidth * 0.9, height = window.innerHeight * 0.9;
+    svg.attr("width", width).attr("height", height);
+    force.size([width, height]).resume();
+
+    svg.append("svg:rect")
+        .attr("width", width)
+        .attr("height", height)
+        .style("stroke", "#000");
+
+}
+
+var flroot;
+
+
+
+function update(root) {
+
+
+
+    var nodes = flatten(root),
+        links = d3.layout.tree().links(nodes);
+
+    flroot = nodes;
+
+
+
+    // Restart the force layout.
+    force
+        .nodes(nodes)
+        .links(links)
+        .linkDistance(fontSize * 10)
+        .charge(-520)
+        .gravity(.05)
+        .size([width, height])
+        .start();
+
+
+    var drag = force.drag()
+
+
+    // Update links.
+    link = link.data(links, function(d) {
+        return d.target.id;
+    });
+
+    link.exit().remove();
+
+    link.enter().insert("line", ".node").attr("class", "link");
+
+    // Update nodes.
+    node = node.data(nodes, function(d) {
+        return d.id;
+    });
+
+    node.exit().remove();
+    
+
+    var nodeEnter = node.enter().append("g")
+        .attr("class", "node")
+        .on("click", onclick)
+        .on("click", onclick)
+        .on("touchstart" , onclick)
+        .on("mouseover", mouseover)
+        .on("mouseout", mouseout)
+
+        .call(drag)
+
+
+    var a = nodeEnter.append("a")
+
+
+    var rect = a.append("rect")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("rx", boxRadius)
+        .attr("ry", boxRadius)
+        .attr("height", rectHeight)
+        .attr("width", rectWidth)
+        .attr("class", function(d) {
+            if (hasValue(d.isLeaf)) {
+                if (d.isLeaf) {
+                    return "leaf";
+                } else {
+                    return "parent"
+
+                }
+            }
+
+        })
+        
+
+
+
+    var txt = a.append("text")
+        .attr("class", "text")
+        .style("text-anchor", "middle")
+        .style("font-size", fontSize + "px")
+        .attr("class", function(d) {
+            if (d.url) {
+                return "hyperlink";
+            }
+        })
+        .text(function(d) {
+            return d.name;
+        })
+
+
+
+    var anchors = d3.selectAll('g > a');
+
+    anchors[0].forEach(function(elem) {
+    
+
+        childs = elem.childNodes;
+        
+        
+        var _rect = childs[0];
+        var _text = childs[1];
+        
+        var textSize = _text.getBBox();
+
+
+
+        w = textSize.width + 2 * textXMargin;
+        h = textSize.height + 2 * textYMargin;
+
+
+        _rect.setAttribute("x", -w / 2);
+        _rect.setAttribute("y", -h / 2);
+
+        _text.setAttribute("y", fontSize / 3);
+
+        _rect.setAttribute("width", w)
+        _rect.setAttribute("height", h)
+
+    });
+
+
+}
+
+
+function clickcancel() {
+    var event = d3.dispatch('click', 'dblclick');
+
+    function cc(selection) {
+        var down,
+            tolerance = 5,
+            last,
+            wait = null;
+        // euclidean distance
+        function dist(a, b) {
+            if (a !== null && b !== null && Array.isArray(a) && Array.isArray(b) && a.length > 1 && b.length > 1) {
+                return Math.sqrt(Math.pow(a[0] - b[0], 2), Math.pow(a[1] - b[1], 2));
+            }
+            return 0;
+        }
+        selection.on('mousedown', function() {
+            down = d3.mouse(document.body);
+            last = +new Date();
+        });
+        selection.on('mouseup', function() {
+            if (dist(down, d3.mouse(document.body)) > tolerance) {
+                return;
+            } else {
+                if (wait) {
+                    window.clearTimeout(wait);
+                    wait = null;
+                    event.dblclick(d3.event);
+                } else {
+                    wait = window.setTimeout((function(e) {
+                        return function() {
+                            event.click(e);
+                            wait = null;
+                        };
+                    })(d3.event), 300);
+                }
+            }
+        });
+    };
+    return d3.rebind(cc, event, 'on');
+}
+
+
+
+function bound(coord, max, radius) {
+
+    return Math.max(radius, Math.min(max - radius, coord));
+
+}
+
+
+function tick() {
+
+    link.attr("x1", function(d) {
+            return bound(d.source.x, width, boundingRadius);
+        })
+        .attr("y1", function(d) {
+            return bound(d.source.y, height, boundingRadius);
+        })
+        .attr("x2", function(d) {
+            return bound(d.target.x, width, boundingRadius);
+        })
+        .attr("y2", function(d) {
+            return bound(d.target.y, height, boundingRadius);
+        });
+
+
+
+    node.attr("transform", function(d) {
+        return "translate(" +
+            bound(d.x, width, boundingRadius) + "," +
+            bound(d.y, height, boundingRadius) + ")";
+    });
+
+
+}
+
+
+function dragstart(d) {
+    // d3.select(this).classed("fixed", d.fixed = true);
+    d3.event.sourceEvent.stopPropagation();
+}
+
+function dragend(d) {
+
+    d3.event.sourceEvent.stopPropagation();
+}
+
+function hasValue(d) {
+    return d !== null && typeof d !== 'undefined';
+
+}
+
+function hasChilds(d) {
+    var ret = false;
+
+    ret = hasValue(d.children) || hasValue(d._children);
+
+    return ret;
+
+}
+
+
+function collapse(nodes) {
+    nodes.forEach(function(d) {
+
+        if (d.children) {
+
+            if (hasValue(d)) {
+                console.log("Collapsing " + d.id);
+                var jNode = findJsonNode(d.id, flroot);
+
+                console.log(jNode.id + " has CHILD collapsed, was " + jNode.status);
+                jNode.status = "collapsed";
+
+                jNode.isLeaf = false;
+
+
+            }
+
+
+            d._children = d.children;
+            d.children = null;
+
+        } else {
+            d.children = d._children;
+            d._children = null;
+
+            if (hasChilds(d)) {
+                console.log("Expanding " + d.id);
+
+                var jNode = findJsonNode(d.id, flroot);
+
+                console.log(jNode.id + " has CHILD expanded, was " + jNode.status);
+
+                jNode.status = "expanded";
+
+                jNode.isLeaf = false;
+            }
+
+
+        }
+
+
+    });
+
+
+
+}
+
+
+
+
+function findJsonNode(id, root) {
+
+    if (hasValue(root)) {
+        for (i = 0; i < root.length; i += 1) {
+            if (root[i].id === id) {
+                return root[i];
+            }
+        }
+    }
+
+    return null;
+}
+
+
+
+function findNode(id, currentNode) {
+    var i,
+        currentChild,
+        result;
+
+    if (hasValue(currentNode)) {
+
+        if (id == currentNode.id) {
+            return currentNode;
+        } else {
+
+            // Use a for loop instead of forEach to avoid nested functions
+            // Otherwise "return" will not work properly
+            if (hasValue(currentNode.children)) {
+
+                for (i = 0; i < currentNode.children.length; i += 1) {
+
+                    currentChild = currentNode.children[i];
+
+                    // Search in the current child
+                    result = findNode(id, currentChild);
+
+                    // Return the result if the node has been found
+                    if (result !== false) {
+                        return result;
+                    }
+                }
+
+            }
+
+        }
+
+        // The node has not been found and we have no more options
+        return false;
+    }
+}
+
+
+// Returns a list of all nodes under the root.
+function findRootNodes(root) {
+
+    var _rootNodes = [],
+        i = 0;
+
+
+    if (Array.isArray(root)) {
+        root.forEach(function(elem) {
+            recurse(elem);
+        });
+
+    } else {
+        recurse(root);
+
+    }
+
+    function recurse(node) {
+
+
+        if (node.children) {
+            node.size = node.children.reduce(function(p, v) {
+                return p + recurse(v);
+            }, 0);
+
+            _rootNodes.push(node);
+        }
+
+
+    }
+
+
+    return _rootNodes;
+}
+
+
+// Returns a list of all nodes under the root.
+function flatten(root) {
+
+    var nodes = [],
+        i = 0;
+
+
+    if (Array.isArray(root)) {
+        root.forEach(function(elem) {
+            recurse(elem);
+        });
+
+    } else {
+        recurse(root);
+
+    }
+
+    function recurse(node) {
+
+        node.isLeaf = true;
+
+        if (node.children) {
+            node.size = node.children.reduce(function(p, v) {
+                return p + recurse(v);
+            }, 0);
+            node.isLeaf = false;
+
+        } else
+        if (node._children) {
+            //node.size = node._children.reduce(function(p, v) { return p + recurse(v); }, 0);
+            node.isLeaf = false;
+        }
+
+        if (!node.id) node.id = ++i;
+
+        nodes.push(node);
+    }
+
+
+    return nodes;
+}
+
+// Toggle children on click.
+function onclick(d) {
+
+
+    console.log(d);
+
+    if (d3.event.defaultPrevented) return;
+
+    var graph = d3.select(this)
+    var selection = d3.select(this).select("rect");
+
+
+    if (d.children) {
+
+        if (hasValue(d)) {
+            console.log("Collapsing " + d.id);
+            var jNode = findJsonNode(d.id, flroot);
+
+            console.log(jNode.id + " has CHILD collapsed, was " + jNode.status);
+            jNode.status = "collapsed";
+
+            jNode.isLeaf = false;
+
+
+        }
+
+
+        d._children = d.children;
+        d.children = null;
+
+    } else {
+        d.children = d._children;
+        d._children = null;
+
+        if (hasChilds(d)) {
+            console.log("Expanding " + d.id);
+
+            var jNode = findJsonNode(d.id, flroot);
+
+            console.log(jNode.id + " has CHILD expanded, was " + jNode.status);
+
+            jNode.status = "expanded";
+
+            jNode.isLeaf = false;
+        }
+
+
+    }
+    update(root);
+
+}
+
+
+
+function mouseover(e) {
+
+    var selection = d3.select(this).select("rect");
+
+    var text = d3.select(this).select("text");
+
+    d3.select(this).moveToFront();
+
+    selection.classed("hover", true);
+    text.classed("hover", true);
+
+    var offsetX = parseFloat(selection.attr("x")) + parseFloat(selection.attr("width") / 2.0);
+    var offsetY = parseFloat(selection.attr("y")) + parseFloat(selection.attr("height") / 2.0);
+
+    selection.transition().duration(animInTime)
+        .attr({
+            transform: "translate(" + offsetX + "," + offsetY + ") " +
+                "scale(" + zoom + ") " +
+                "translate(-" + offsetX + ",-" + offsetY + ")"
+        });
+
+
+
+}
+
+function mouseout(e) {
+
+
+    var selection = d3.select(this).select("rect");
+    var text = d3.select(this).select("text");
+
+    selection.classed("hover", false);
+    text.classed("hover", false);
+
+    var offsetX = parseFloat(selection.attr("x")) + parseFloat(selection.attr("width") / 2.0);
+    var offsetY = parseFloat(selection.attr("y")) + parseFloat(selection.attr("height") / 2.0);
+
+    selection.transition().duration(animOutTime)
+        .attr({
+            transform: "translate(" + offsetX + "," + offsetY + ") " +
+                "scale(" + (1) + ") " +
+                "translate(-" + offsetX + ",-" + offsetY + ")"
+        });
+
+}
+
+</script> 
+
+
+</body>
+</html>
