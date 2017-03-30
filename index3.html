@@ -122,12 +122,53 @@ text.hover {
 	color: #fefefe;
 }
 
-#container{ border:1px solid red; background: transparent;}
+#container{  border:1px solid red; background: transparent;}
+
+
+button {
+    background-color:#ffffff;
+    border:3px solid #45454a;
+    border-radius:20px;
+    padding:0px;
+    font-size: 16px;
+    width:158px;
+    height:40px;    
+    margin:0px;
+    color:#45454a;
+    outline: none;
+
+}
+
+button:hover {
+    background-color:#ff4d4a;
+    border:3px solid #ff4d4a;
+    border-radius:20px;
+    padding:0px;
+    font-size: 16px;
+    width:158px;
+    height:40px;    
+    margin:0px;
+    color:#ffffff;
+    outline: none;
+
+}
+
+#buttons { display:block;position:absolute; top:0px; left:0px; }
+#container{ display:block;position:absolute; top:0px; left:0px; }
 
 
 </style>
 <body>
-<div id="container"></div>
+
+
+<div id="container">
+
+
+</div>
+<!--div id="buttons">
+<button id="expandAll">Expand all...</button><br>
+<button id="collapseAll">Collapse all...</button>
+</div-->
 
 <script src="//d3js.org/d3.v3.min.js"></script>
 
@@ -213,7 +254,7 @@ var width = 960,
 		
 
 
-var root = [{
+var root = {
     "name": "flare",
     "url": "http://google.com",
     "children": [{
@@ -287,13 +328,14 @@ var root = [{
             ]
         }
     ]
-}, 
+}
+/*, 
 {
                     "name": "External",
                     "url": "http://google.com"
                     }
                     
-                    ];
+    ];*/
 
 
                     
@@ -305,12 +347,30 @@ var root = [{
                         var newNode = JSON.clone( emptyNode );
                         newNode.id = ++lastNodeID;
                         newNode.name = "Node #"+ lastNodeID;
+                        newNode.isLeaf = true;
+                        
+                        if ( !Array.isArray( root ) )
+                        {
+                            root = [root];
+                        }
 
                         root.push( newNode );   
                         update( root);
                     
            
             }
+        },
+        {
+            title: 'Expand all',
+            action: function(elm, d, i) {
+            }
+            
+        },
+        {
+            title: 'Collapse all',
+            action: function(elm, d, i) {
+            }
+            
         }
     ]
             
@@ -494,10 +554,11 @@ var force = d3.layout.force()
     
 
 var div =  d3.selectAll("div#container")
-div.on('contextmenu', d3.contextMenu(menu));
 
+    div.on('contextmenu', d3.contextMenu(mainMenu));
+    
 
-var svg = div.insert("svg")
+var svg = div.append("svg")
     .attr("width", width)
     .attr("height", height)
 
@@ -517,7 +578,7 @@ update(root)
 
 function resize(e) {
 
-console.log( this );
+    console.log( this );
 
 
     width = window.innerWidth * 0.9, height = window.innerHeight * 0.9;
@@ -544,6 +605,8 @@ function update(root) {
             
 
     flroot = nodes;
+    
+    rootNodes = findRootNodes(root);
     
     //console.log( root );
 
