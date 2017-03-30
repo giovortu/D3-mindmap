@@ -71,7 +71,17 @@ text.hover {
 
 }
 
+.plus {
+    fill:#ff00ff;
+    stroke:"#90ff90;
+    stroke-width:1px;
+}
 
+.minus {
+    fill:#00ffff;
+    stroke:"#ffff90;
+    stroke-width:1px;
+ }
 
 
 
@@ -124,8 +134,11 @@ text.hover {
 <script>
 
 
+
 function makeD3()
 {
+
+var lastNodeID = 0;
 
 
 d3.contextMenu = function (menu, openCallback) {
@@ -194,28 +207,13 @@ var width = 960,
     fontSize = 12,
     boundingRadius = 20
 
-	var menu = [
-			{
-				title: 'Add sub node',
-				action: function(elm, d, i) {
-					console.log('Item #1 clicked!');
-					console.log('The data for this circle is: ' + d);
-				}
-			},
-			{
-				title: 'Remove node',
-				action: function(elm, d, i) {
-					console.log('You have clicked the second item!');
-					console.log('The data for this circle is: ' + d);
-				}
-			}
-		]
+
 		
 		
 		
 
 
-var root = {
+var root = [{
     "name": "flare",
     "url": "http://google.com",
     "children": [{
@@ -289,7 +287,13 @@ var root = {
             ]
         }
     ]
-};
+}, 
+{
+                    "name": "External",
+                    "url": "http://google.com"
+                    }
+                    
+                    ];
 
 
 /*
@@ -305,7 +309,12 @@ d3.json("data.json", function(error, json) {
 
 */
 
-
+var emptyNode = {
+                        "name": "New node",
+                        "isLeaf":true,
+                        "url": "h"
+                       
+                }
 
 
 var force = d3.layout.force()
@@ -322,7 +331,7 @@ var svg = d3.selectAll("div#container").insert("svg")
     .attr("height", height);
     
     
-    d3.selectAll("div#container").on('contextmenu', d3.contextMenu(menu));
+    //d3.selectAll("div#container")
     
 var link = svg.selectAll(".link"),
     node = svg.selectAll(".node");
@@ -333,7 +342,7 @@ var rootNodes = findRootNodes(root);
 
 
 update(root)
-collapse(rootNodes);
+collapse(findRootNodes(root));
 update(root)
 
 function resize(e) {
@@ -356,6 +365,7 @@ var flroot;
 
 
 
+
 function update(root) {
 
 
@@ -364,8 +374,154 @@ function update(root) {
             
 
     flroot = nodes;
+    
+    //console.log( root );
 
 
+    var menu = [
+        {
+            title: 'Add sub node',
+            action: function(elm, d, i) {
+            
+                if ( d )
+                {
+                    var nn = findNode( d.id, root );
+                    console.log( d.id );
+                    console.log("-----------");
+                    console.log( nn );
+                    if ( nn.isLeaf )
+                    {
+                        nn.children = [];
+                        nn._children = null;
+                    }                    
+                    
+                    var child = nn.children || nn._children || null;
+                    
+                    //console.log( child );
+                    
+                    if ( child )
+                    {
+                        var newNode = JSON.clone( emptyNode );
+                        newNode.id = ++lastNodeID;
+                        newNode.name = "Node #"+ lastNodeID;
+                        child.push( newNode );
+                        nn.isLeaf=false;
+                        var tt = svg.select("#JIKU_MM_RECT_" + nn.id );
+
+                        if (tt ) 
+                        {
+                            tt.attr( "class", "parent" );
+                        }
+                        //collapse( [nn] )
+                        //collapse( [nn] )
+                        update(root)
+                    }
+                  
+                    
+                    
+                }
+            }
+        },
+        {
+            title: 'Rename node',
+            action: function(elm, d, i) {
+            
+                if ( d )
+                {
+                    console.log( d )
+                    var nn = findNode( d.id, root );            
+                    var tt = svg.select("#JIKU_MM_TEXT_" + nn.id )[0][0];
+                    if ( tt )
+                    {
+                        var txt = nn.name;
+                        console.log( txt );
+                        
+                        var txtElem= d3.select(tt);                       
+
+                        
+                        frm  = svg.append("foreignObject");
+                        
+                        var removed = false;
+   
+                        var inp = frm
+                                .attr("x", d.x)
+                                .attr("y", d.y)
+                                .attr("width", 300)
+                                .attr("height", 25)
+                                .append("xhtml:form")
+                                .append("input")
+                                .attr("value", function() {
+                                                // nasty spot to place this call, but here we are sure that the <input> tag is available
+                                                // and is handily pointed at by 'this':
+                                                this.focus();
+
+                                                return txt;
+                                            })
+                                .attr("style", "width: 294px;")
+                                            // make the form go away when you jump out (form looses focus) or hit ENTER:
+                                .on("blur", function() {
+                                                //console.log("blur", this, arguments);
+                                                if (removed) return;
+                                                removed = true;
+                                                svg.select("foreignObject").remove();
+                                                update( root );
+                                            })
+                                .on("keypress", function(e) {
+                                                //console.log("keypress", this, arguments);
+                                                
+                                                //detachEvent(frm, 'blur', onblur);
+
+                                                // IE fix
+                                                if (!d3.event)
+                                                    d3.event = window.event;
+
+                                                var e = d3.event;
+                                                if (e.keyCode == 13)
+                                                {
+                                                    if (typeof(e.cancelBubble) !== 'undefined') // IE
+                                                    e.cancelBubble = true;
+                                                    if (e.stopPropagation)
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+
+                                                    var txt = inp.node().value;
+
+                                                    txtElem.text(function(d) { return txt; });
+                                                    nn.name = txt;
+
+                                                    // odd. Should work in Safari, but the debugger crashes on this instead.
+                                                    // Anyway, it SHOULD be here and it doesn't hurt otherwise.
+                                                    removed = true;
+                                                    svg.selectAll("foreignObject").remove();
+                                                    update( root );
+
+                                                }
+                                                else
+                                                if (e.keyCode === 27) //ESC
+                                                {
+                                                    svg.selectAll("foreignObject").remove();
+                                                }
+
+                        
+                        
+                                    
+                                })
+                        }
+                    }
+                }
+            
+        },
+        {
+            title: 'Remove node',
+            action: function(elm, d, i) {
+                if ( d )
+                {
+                    var nn = removeNode( d.id, root );
+                    update( root );
+                }
+            }
+        }
+    ]
 
     // Restart the force layout.
     force
@@ -390,9 +546,9 @@ function update(root) {
     link.exit().remove();
 
     link.enter().insert("line", ".node")
-    .attr("class", "link")
-            .style("stroke-width", function(d) { return Math.sqrt(d.value); })
-            .attr("marker-end", "url(#end)");
+        .attr("class", "link")
+        .style("stroke-width", function(d) { return Math.sqrt(d.value); })
+        .attr("marker-end", "url(#end)");
 
     // Update nodes.
     node = node.data(nodes, function(d) {
@@ -405,13 +561,12 @@ function update(root) {
     var nodeEnter = node.enter().append("g")
         .attr("class", "node")
         .on("click", onclick)
-        .on("click", onclick)
         .on("touchstart" , onclick)
         .on("mouseover", mouseover)
         .on("mouseout", mouseout)
-
         .call(drag)
 
+        nodeEnter.on('contextmenu', d3.contextMenu(menu));
 
     var a = nodeEnter.append("a")
 
@@ -423,6 +578,7 @@ function update(root) {
         .attr("ry", boxRadius)
         .attr("height", rectHeight)
         .attr("width", rectWidth)
+        .attr("id", function(d) { return "JIKU_MM_RECT_" + d.id; } )
         .attr("class", function(d) {
             if (hasValue(d.isLeaf)) {
                 if (d.isLeaf) {
@@ -442,6 +598,7 @@ function update(root) {
         .attr("class", "text")
         .style("text-anchor", "middle")
         .style("font-size", fontSize + "px")
+        .attr("id", function(d) { return "JIKU_MM_TEXT_" + d.id; } )
         .attr("class", function(d) {
             if (d.url) {
                 return "hyperlink";
@@ -452,19 +609,31 @@ function update(root) {
         })
 
 
+//     var circlePlus = a.append( "circle" )
+//         .attr("class", "plus")
+//         .attr("r",10)
+//         .on("click", onclickplus)
+//         .on("touchstart" , onclickplus)
+//     
+//     var circleMinus = a.append( "circle" )
+//         .attr("class", "minus")
+//         .attr("r",10)
+//         .on("click", onclickminus)
+//         .on("touchstart" , onclickminus)
 
     var anchors = d3.selectAll('g > a');
     
-    a.on('contextmenu', d3.contextMenu(menu));
+    a.on('contextmenu', d3.contextMenu(menu) );
 
     anchors[0].forEach(function(elem) {
     
 
-        childs = elem.childNodes;
-        
+        childs = elem.childNodes;        
         
         var _rect = childs[0];
         var _text = childs[1];
+//         var _cplus = childs[2];
+//         var _cminus = childs[3];
         
         var textSize = _text.getBBox();
 
@@ -481,11 +650,19 @@ function update(root) {
 
         _rect.setAttribute("width", w)
         _rect.setAttribute("height", h)
+        
+//         _cplus.setAttribute( "cx", w /2);
+//         _cplus.setAttribute( "cy", -h/2 );
+//         _cminus.setAttribute( "cx", w/2 );
+//         _cminus.setAttribute( "cy", h/2 );
+
 
     });
 
 
 }
+
+
 
 
 function clickcancel() {
@@ -553,8 +730,6 @@ function tick() {
             return bound(d.target.y, height, boundingRadius);
         });
 
-
-
     node.attr("transform", function(d) {
         return "translate(" +
             bound(d.x, width, boundingRadius) + "," +
@@ -566,7 +741,7 @@ function tick() {
 
 
 function dragstart(d) {
-    // d3.select(this).classed("fixed", d.fixed = true);
+
     d3.event.sourceEvent.stopPropagation();
 }
 
@@ -591,6 +766,7 @@ function hasChilds(d) {
 
 
 function collapse(nodes) {
+
     nodes.forEach(function(d) {
 
         if (d.children) {
@@ -602,7 +778,7 @@ function collapse(nodes) {
                 console.log(jNode.id + " has CHILD collapsed, was " + jNode.status);
                 jNode.status = "collapsed";
 
-                jNode.isLeaf = false;
+                //jNode.isLeaf = false;
 
 
             }
@@ -624,7 +800,7 @@ function collapse(nodes) {
 
                 jNode.status = "expanded";
 
-                jNode.isLeaf = false;
+               //jNode.isLeaf = false;
             }
 
 
@@ -653,43 +829,145 @@ function findJsonNode(id, root) {
     return null;
 }
 
+function removeNode(id, _root) {
+        
+        var i,
+            elem;
 
-
-function findNode(id, currentNode) {
-    var i,
-        currentChild,
-        result;
-
-    if (hasValue(currentNode)) {
-
-        if (id == currentNode.id) {
-            return currentNode;
-        } else {
-
-            // Use a for loop instead of forEach to avoid nested functions
-            // Otherwise "return" will not work properly
-            if (hasValue(currentNode.children)) {
-
-                for (i = 0; i < currentNode.children.length; i += 1) {
-
-                    currentChild = currentNode.children[i];
-
-                    // Search in the current child
-                    result = findNode(id, currentChild);
-
-                    // Return the result if the node has been found
-                    if (result !== false) {
-                        return result;
-                    }
+        console.log( "Removing " + id );
+        
+        if (Array.isArray(_root))
+        {
+            
+            for ( i = 0; i< _root.length; i++ )
+            {
+            
+                elem = _root[i];
+                
+                console.log("OOOOOOOOOOOOOO " + elem.id );
+                
+                if ( elem.id == id )
+                {
+                   _root.splice(i,1);
+                }
+                else
+                {
+                    _remove(id,  elem );
                 }
 
             }
 
+        } 
+        else 
+        { 
+            _remove( id, currentNode )
+        }
+        
+        function _remove( id, currentNode )
+        {       
+            var _j, currentChild;
+            
+            if (hasValue(currentNode))
+            {    
+                 
+                if ( currentNode.children ) parseChilds(id,  currentNode.children );
+                if ( currentNode._children ) parseChilds( id, currentNode._children );
+                
+                
+                function parseChilds( id, childs)
+                {
+
+                    for( _j = 0;_j < childs.length; _j++ )
+                    {
+                            currentChild = childs[_j];
+                            
+                            //console.log(currentNode.name + ", numChilds=" +  childs.length +", index=" + _j + " name=" +currentChild.name +" id=" + currentChild.id );
+                            
+                            if ( currentChild.id == id )
+                            {
+                                console.log( "Found, removing ");
+                                childs.splice(_j, 1);
+                                return;
+                        
+                            }
+                            else
+                            {
+                                _remove(id, currentChild);
+                            }
+
+                    }  
+                }
+            }    
+
         }
 
-        // The node has not been found and we have no more options
-        return false;
+ 
+}
+
+
+
+
+function findNode(id, currentNode) {
+
+        var i,
+            currentChild,
+            result;
+
+        console.log( "find " + id );
+        console.log( currentNode )
+        
+        if (Array.isArray(currentNode))
+        {
+            for (var i = 0; i< currentNode.length; i++ )
+            {
+                elem =currentNode[i];
+                console.log( "recurring" );
+                res = findNode(id, elem);
+                if ( res !== false )
+                    return res;
+            }
+
+        } 
+        else 
+        { 
+      
+            if (id == currentNode.id) {
+                console.log( "Found" );
+                console.log ( currentNode );
+                
+                return currentNode;
+            }
+            else
+            {
+            
+                if (hasValue(currentNode))
+                {
+                    if (hasValue(currentNode.children)) 
+                    {
+
+                        for (var i = 0; i < currentNode.children.length; i += 1) 
+                        {
+
+                                currentChild = currentNode.children[i];
+
+                                // Search in the current child
+                                result = findNode(id, currentChild);
+
+                                // Return the result if the node has been found
+                                if (result !== false) {
+                                    return result;
+                                }
+                        }
+
+                    }
+
+                }
+
+
+        }
+    
     }
+    return false;
 }
 
 
@@ -728,20 +1006,34 @@ function findRootNodes(root) {
     return _rootNodes;
 }
 
+if (typeof JSON.clone !== "function") {
+    JSON.clone = function(obj) {
+        return JSON.parse(JSON.stringify(obj));
+    };
+}
+
+
 
 // Returns a list of all nodes under the root.
 function flatten(root) {
 
-    var nodes = [],
-        i = 0;
+    var nodes = []        
 
 
     if (Array.isArray(root)) {
         root.forEach(function(elem) {
-            recurse(elem);
+            
+            flat = flatten( elem );
+            flat.forEach( function(e)
+            {
+                    nodes.push( e ); 
+            } );
+            
+            
         });
 
     } else {
+    
         recurse(root);
 
     }
@@ -749,9 +1041,11 @@ function flatten(root) {
     function recurse(node) {
 
         node.isLeaf = true;
+        
 
         if (node.children) {
             node.size = node.children.reduce(function(p, v) {
+                v.parent = node ;
                 return p + recurse(v);
             }, 0);
             node.isLeaf = false;
@@ -762,7 +1056,8 @@ function flatten(root) {
             node.isLeaf = false;
         }
 
-        if (!node.id) node.id = ++i;
+        if (!node.id) node.id = ++lastNodeID;
+        
 
         nodes.push(node);
     }
