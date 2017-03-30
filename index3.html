@@ -296,86 +296,24 @@ var root = [{
                     ];
 
 
-/*
-
-    // from file ...
-    
-d3.json("data.json", function(error, json) {
-  if (error) throw error;
-
-  root = json;
-  update();
-});
-
-*/
-
-var emptyNode = {
-                        "name": "New node",
-                        "isLeaf":true,
-                        "url": "h"
-                       
-                }
-
-
-var force = d3.layout.force()
-    .linkDistance(140)
-    .charge(-420)
-    .gravity(.065)
-    .size([width, height])
-    .on("tick", tick)
-
-
-
-var svg = d3.selectAll("div#container").insert("svg")
-    .attr("width", width)
-    .attr("height", height);
-    
-    
-    //d3.selectAll("div#container")
-    
-var link = svg.selectAll(".link"),
-    node = svg.selectAll(".node");
-
-
-
-var rootNodes = findRootNodes(root);
-
-
-update(root)
-collapse(findRootNodes(root));
-update(root)
-
-function resize(e) {
-
-console.log( this );
-
-
-    width = window.innerWidth * 0.9, height = window.innerHeight * 0.9;
-    svg.attr("width", width).attr("height", height);
-    force.size([width, height]).resume();
-
-    svg.append("svg:rect")
-        .attr("width", width)
-        .attr("height", height)
-        .style("stroke", "#000");
-
-}
-
-var flroot;
-
-
-
-
-function update(root) {
-
-
-    var nodes = flatten(root),
-        links = d3.layout.tree().links(nodes)
+                    
+    var mainMenu = [
+        {
+            title: 'Add new node',
+            action: function(elm, d, i) {
             
+                        var newNode = JSON.clone( emptyNode );
+                        newNode.id = ++lastNodeID;
+                        newNode.name = "Node #"+ lastNodeID;
 
-    flroot = nodes;
-    
-    //console.log( root );
+                        root.push( newNode );   
+                        update( root);
+                    
+           
+            }
+        }
+    ]
+            
 
 
     var menu = [
@@ -522,6 +460,93 @@ function update(root) {
             }
         }
     ]
+    
+    
+    
+/*
+
+    // from file ...
+    
+d3.json("data.json", function(error, json) {
+  if (error) throw error;
+
+  root = json;
+  update();
+});
+
+*/
+
+var emptyNode = {
+                        "name": "New node",
+                        "isLeaf":true,
+                        "url": "h"
+                       
+                }
+
+
+var force = d3.layout.force()
+    .linkDistance(140)
+    .charge(-420)
+    .gravity(.065)
+    .size([width, height])
+    .on("tick", tick)
+    
+    
+
+var div =  d3.selectAll("div#container")
+div.on('contextmenu', d3.contextMenu(menu));
+
+
+var svg = div.insert("svg")
+    .attr("width", width)
+    .attr("height", height)
+
+    
+
+    
+var link = svg.selectAll(".link"),
+    node = svg.selectAll(".node");
+
+
+var rootNodes = findRootNodes(root);
+
+
+update(root)
+collapse(findRootNodes(root));
+update(root)
+
+function resize(e) {
+
+console.log( this );
+
+
+    width = window.innerWidth * 0.9, height = window.innerHeight * 0.9;
+    svg.attr("width", width).attr("height", height);
+    force.size([width, height]).resume();
+
+    svg.append("svg:rect")
+        .attr("width", width)
+        .attr("height", height)
+        .style("stroke", "#000");
+
+}
+
+var flroot;
+
+
+
+
+function update(root) {
+
+
+    var nodes = flatten(root),
+        links = d3.layout.tree().links(nodes)
+            
+
+    flroot = nodes;
+    
+    //console.log( root );
+
 
     // Restart the force layout.
     force
@@ -566,7 +591,7 @@ function update(root) {
         .on("mouseout", mouseout)
         .call(drag)
 
-        nodeEnter.on('contextmenu', d3.contextMenu(menu));
+        
 
     var a = nodeEnter.append("a")
 
@@ -1141,6 +1166,8 @@ function mouseover(e) {
                 "translate(-" + offsetX + ",-" + offsetY + ")"
         });
 
+        div.on('contextmenu',null);
+        selection.on('contextmenu', d3.contextMenu(menu));
 
 
 }
@@ -1163,6 +1190,9 @@ function mouseout(e) {
                 "scale(" + (1) + ") " +
                 "translate(-" + offsetX + ",-" + offsetY + ")"
         });
+        
+        div.on('contextmenu',d3.contextMenu(mainMenu));
+        selection.on('contextmenu', null );
 
 }
 
