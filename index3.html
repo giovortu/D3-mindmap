@@ -152,19 +152,18 @@ button:hover {
     outline: none;
 
 }
-
-#buttons { display:block;position:absolute; top:0px; left:0px; }
-#container{ display:block;position:absolute; top:0px; left:0px; }
+}
 
 
 </style>
-<body>
+<body onload="makeD3( { 'editable': true } )">
 
 
 <div id="container">
 
 
 </div>
+<textarea id="result"></textarea>
 <!--div id="buttons">
 <button id="expandAll">Expand all...</button><br>
 <button id="collapseAll">Collapse all...</button>
@@ -176,10 +175,19 @@ button:hover {
 
 
 
-function makeD3()
+function makeD3( options )
 {
 
 var lastNodeID = 0;
+
+if (typeof JSON.clone !== "function") {
+    JSON.clone = function(obj) {
+        return JSON.parse(JSON.stringify(obj));
+    };
+}
+
+var enableEdit = options && options.editable;
+
 
 
 d3.contextMenu = function (menu, openCallback) {
@@ -329,14 +337,6 @@ var root = {
         }
     ]
 }
-/*, 
-{
-                    "name": "External",
-                    "url": "http://google.com"
-                    }
-                    
-    ];*/
-
 
                     
     var mainMenu = [
@@ -344,10 +344,13 @@ var root = {
             title: 'Add new node',
             action: function(elm, d, i) {
             
+
                         var newNode = JSON.clone( emptyNode );
                         newNode.id = ++lastNodeID;
                         newNode.name = "Node #"+ lastNodeID;
                         newNode.isLeaf = true;
+                        newNode.x = width / 2 +150 ;
+                        newNode.y = height / 2 + 150 ;
                         
                         if ( !Array.isArray( root ) )
                         {
@@ -373,7 +376,8 @@ var root = {
             
         }
     ]
-            
+    
+    var input;
 
 
     var menu = [
@@ -402,6 +406,8 @@ var root = {
                         var newNode = JSON.clone( emptyNode );
                         newNode.id = ++lastNodeID;
                         newNode.name = "Node #"+ lastNodeID;
+                        newNode.x = nn.x + 100 ;
+                        newNode.y = nn.y + 100 ;
                         child.push( newNode );
                         nn.isLeaf=false;
                         var tt = svg.select("#JIKU_MM_RECT_" + nn.id );
@@ -437,11 +443,11 @@ var root = {
                         var txtElem= d3.select(tt);                       
 
                         
-                        frm  = svg.append("foreignObject");
+                        frm  = svg.append("foreignObject").attr("id","renamer");
                         
                         var removed = false;
    
-                        var inp = frm
+                        inp = frm
                                 .attr("x", d.x)
                                 .attr("y", d.y)
                                 .attr("width", 300)
@@ -546,8 +552,8 @@ var emptyNode = {
 
 var force = d3.layout.force()
     .linkDistance(140)
-    .charge(-420)
-    .gravity(.065)
+    .charge(-320)
+    .gravity(.075)
     .size([width, height])
     .on("tick", tick)
     
@@ -555,8 +561,10 @@ var force = d3.layout.force()
 
 var div =  d3.selectAll("div#container")
 
+if ( enableEdit )
+{
     div.on('contextmenu', d3.contextMenu(mainMenu));
-    
+}   
 
 var svg = div.append("svg")
     .attr("width", width)
@@ -608,6 +616,11 @@ function update(root) {
     
     rootNodes = findRootNodes(root);
     
+    if ( enableEdit )
+    {
+        console.log( filterAll( root ) );
+        document.getElementById("result").value = JSON.stringify( filterAll( root ) );
+    }
     //console.log( root );
 
 
@@ -711,7 +724,10 @@ function update(root) {
 
     var anchors = d3.selectAll('g > a');
     
-    a.on('contextmenu', d3.contextMenu(menu) );
+        if ( enableEdit )
+        {
+            a.on('contextmenu', d3.contextMenu(menu) );
+        }
 
     anchors[0].forEach(function(elem) {
     
@@ -931,8 +947,7 @@ function removeNode(id, _root) {
             {
             
                 elem = _root[i];
-                
-                console.log("OOOOOOOOOOOOOO " + elem.id );
+
                 
                 if ( elem.id == id )
                 {
@@ -948,7 +963,7 @@ function removeNode(id, _root) {
         } 
         else 
         { 
-            _remove( id, currentNode )
+            _remove( id, _root )
         }
         
         function _remove( id, currentNode )
@@ -975,7 +990,19 @@ function removeNode(id, _root) {
                             {
                                 console.log( "Found, removing ");
                                 childs.splice(_j, 1);
-                                return;
+                                if ( childs.length == 0 )
+                                {
+                                    currentNode.isLeaf = true;
+                                    
+                                    var tt = svg.select("#JIKU_MM_RECT_" + currentNode.id );
+
+                                    if (tt ) 
+                                    {
+                                        tt.attr( "class", "leaf" );
+                                    }
+                                    
+                                }
+                                return currentChild;
                         
                             }
                             else
@@ -992,7 +1019,98 @@ function removeNode(id, _root) {
  
 }
 
+function filterAll( _currentNode )
+{
 
+        var i,
+            elem;
+            
+        var currentNode = JSON.clone( _currentNode );
+
+        console.log( "Filtering " );
+        
+        if (Array.isArray(currentNode))
+        {
+            
+            for ( i = 0; i< currentNode.length; i++ )
+            {
+            
+                elem = currentNode[i];
+
+                _filter(elem );            
+
+            }
+
+        } 
+        else 
+        { 
+            _filter( currentNode )
+        }
+        
+        function _filter( currentNode )
+        {       
+            var _j, currentChild;
+            
+            delete currentNode.x;
+            delete currentNode.y;
+            delete currentNode.px;
+            delete currentNode.py;
+            delete currentNode.weight;
+            delete currentNode.isLeaf;
+            delete currentNode.index;
+            delete currentNode.size;
+            delete currentNode.status;
+            
+            if (hasValue(currentNode))
+            {    
+                 
+                 if ( currentNode._children )
+                 {
+                    if ( currentNode.children )
+                    {
+                        
+                    }
+                    else
+                    {
+                        currentNode.children = [];
+                    }
+                    
+                    for( _j = 0;_j < currentNode._children.length; _j++ )
+                    {
+                        currentNode.children.push(  currentNode._children[_j] )
+                    }
+                    
+                    
+                 }
+                 
+                 delete currentNode._children;
+                 
+                if ( currentNode.children ) parseChilds( currentNode.children );
+                if ( currentNode._children ) parseChilds( currentNode._children );
+                
+                
+                
+                
+                function parseChilds( childs)
+                {
+
+                    for( _j = 0;_j < childs.length; _j++ )
+                    {
+                            currentChild = childs[_j];
+                            
+ 
+                           _filter( currentChild );
+
+                    }  
+                }
+            }    
+
+        }
+        
+        return currentNode;
+
+
+}
 
 
 function findNode(id, currentNode) {
@@ -1094,11 +1212,6 @@ function findRootNodes(root) {
     return _rootNodes;
 }
 
-if (typeof JSON.clone !== "function") {
-    JSON.clone = function(obj) {
-        return JSON.parse(JSON.stringify(obj));
-    };
-}
 
 
 
@@ -1133,7 +1246,7 @@ function flatten(root) {
 
         if (node.children) {
             node.size = node.children.reduce(function(p, v) {
-                v.parent = node ;
+                //v.parent = node ;
                 return p + recurse(v);
             }, 0);
             node.isLeaf = false;
@@ -1210,6 +1323,15 @@ function onclick(d) {
 
 function mouseover(e) {
 
+if ( enableEdit ){
+
+    input = d3.select( "#renamer" )[0][0];
+
+    if ( input )  return;
+
+    
+}
+
     var selection = d3.select(this).select("rect");
 
     var text = d3.select(this).select("text");
@@ -1218,7 +1340,8 @@ function mouseover(e) {
 
     selection.classed("hover", true);
     text.classed("hover", true);
-
+    
+    
     var offsetX = parseFloat(selection.attr("x")) + parseFloat(selection.attr("width") / 2.0);
     var offsetY = parseFloat(selection.attr("y")) + parseFloat(selection.attr("height") / 2.0);
 
@@ -1228,9 +1351,12 @@ function mouseover(e) {
                 "scale(" + zoom + ") " +
                 "translate(-" + offsetX + ",-" + offsetY + ")"
         });
+        
+        if ( enableEdit ){
 
-        div.on('contextmenu',null);
-        selection.on('contextmenu', d3.contextMenu(menu));
+            div.on('contextmenu',null);
+            selection.on('contextmenu', d3.contextMenu(menu));
+        }
 
 
 }
@@ -1254,14 +1380,21 @@ function mouseout(e) {
                 "translate(-" + offsetX + ",-" + offsetY + ")"
         });
         
-        div.on('contextmenu',d3.contextMenu(mainMenu));
-        selection.on('contextmenu', null );
+        
+        if ( enableEdit )
+        {
+        
+            div.on('contextmenu',d3.contextMenu(mainMenu));
+            selection.on('contextmenu', null );
+        }
 
 }
 
 }
 
-makeD3();
+
+
+
 
 </script> 
 
