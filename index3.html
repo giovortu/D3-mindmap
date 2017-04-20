@@ -61,6 +61,30 @@ text.hover {
 
 }
 
+.little-button, .little-button:hover
+{
+    width:80px;
+    height:30px;
+    font-size:12px;
+    float:left;
+    margin:5px;
+}
+
+
+
+.rename-textarea
+{
+    border:1px solid #ff4d4a;
+    border-radius:15px;
+    width:250px;
+    height:100px;
+    padding:10px;
+    outline: none;
+    float:left;
+}
+
+.rename-form{ width:250px; }
+
 .parent {
     stroke:#00ff00;
 }
@@ -443,33 +467,32 @@ var root = {
                         var txtElem= d3.select(tt);                       
 
                         
-                        frm  = svg.append("foreignObject").attr("id","renamer");
+                        frm  = d3.select("body").append("div").attr("id","renamer").attr("style","position:absolute;top:"+ d.y + "px; left:" + d.x + "px;")
                         
                         var removed = false;
    
-                        inp = frm
+                        form = frm
                                 .attr("x", d.x)
                                 .attr("y", d.y)
-                                .attr("width", 300)
-                                .attr("height", 25)
                                 .append("xhtml:form")
-                                .append("input")
+                                .classed("rename-form", true)
+                                
+                        inp = form
+                                .append("textarea")
+                                
+                                inp
+                                .classed("rename-textarea", true)
                                 .attr("value", function() {
                                                 // nasty spot to place this call, but here we are sure that the <input> tag is available
                                                 // and is handily pointed at by 'this':
                                                 this.focus();
+                                                
+                                                inp[0][0].value = txt;
+
 
                                                 return txt;
                                             })
-                                .attr("style", "width: 294px;")
-                                            // make the form go away when you jump out (form looses focus) or hit ENTER:
-                                .on("blur", function() {
-                                                //console.log("blur", this, arguments);
-                                                if (removed) return;
-                                                removed = true;
-                                                svg.select("foreignObject").remove();
-                                                update( root );
-                                            })
+                                
                                 .on("keypress", function(e) {
                                                 //console.log("keypress", this, arguments);
                                                 
@@ -480,36 +503,60 @@ var root = {
                                                     d3.event = window.event;
 
                                                 var e = d3.event;
-                                                if (e.keyCode == 13)
-                                                {
-                                                    if (typeof(e.cancelBubble) !== 'undefined') // IE
-                                                    e.cancelBubble = true;
-                                                    if (e.stopPropagation)
-                                                    e.stopPropagation();
-                                                    e.preventDefault();
-
-                                                    var txt = inp.node().value;
-
-                                                    txtElem.text(function(d) { return txt; });
-                                                    nn.name = txt;
-
-                                                    // odd. Should work in Safari, but the debugger crashes on this instead.
-                                                    // Anyway, it SHOULD be here and it doesn't hurt otherwise.
-                                                    removed = true;
-                                                    svg.selectAll("foreignObject").remove();
-                                                    update( root );
-
-                                                }
-                                                else
+                                                
                                                 if (e.keyCode === 27) //ESC
                                                 {
-                                                    svg.selectAll("foreignObject").remove();
+                                                    d3.selectAll("div#renamer").remove();
                                                 }
 
                         
                         
                                     
                                 })
+                                
+                                 buttAnnulla = frm.append("xhtml:button")
+                                .classed("little-button", true)
+                                .text("Annulla")
+                                .on("click", function()
+                                {
+                                        removed = true;
+                                        d3.selectAll("div#renamer").remove();
+                                        //update( root );
+                                                    
+                                })
+                                
+                                buttOK = frm.append("xhtml:button")
+                                .classed("little-button", true)
+                                .text("Salva")
+                                .on("click", function()
+                                {
+                                        var txt = inp.node().value;
+                                        //alert(txt);
+
+                                        txtElem.text(function(d) { return txt; });
+                                        nn.name = txt;
+
+                                        // odd. Should work in Safari, but the debugger crashes on this instead.
+                                        // Anyway, it SHOULD be here and it doesn't hurt otherwise.
+                                        removed = true;
+                                        d3.selectAll("div#renamer").remove();
+                                        //update( root );
+                                })
+                                
+                                w = d3.select('svg').clientWidth;
+                                h = d3.select('svg').clientHeight;
+                                
+                                
+                                _bound = d3.select(renamer).node().getBoundingClientRect();
+                                
+                                px = _bound.left;
+                                py = _bound.top;
+                                //ww = bound.
+                                
+                                console.log( d3.select(renamer) )
+                                
+                                
+                                
                         }
                     }
                 }
