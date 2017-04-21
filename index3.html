@@ -1,1449 +1,1444 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
-
 .link {
 
-    fill: none;
-    stroke: #666;
-    stroke-width: 1.5px;
-    pointer-events: none;
+        fill: none;
+        stroke: #666;
+        stroke-width: 1.5px;
+        pointer-events: none;
+    }
+
+
+    rect {
+
+        fill: #ffffff;
+        stroke: #45454a;
+        stroke-width: 3px;
+    }
+
+    rect.hover {
+
+        fill: #ff4d4a;
+        stroke: #45454a;
+        stroke-width: 0px;
+    }
+
+    text {
+
+
+        font-family: sans-serif;
+        font-weight: bold;
+        pointer-events: none;
+        fill: #000000;
+        stroke-width: 0px;
+        cursor: hand;
+
+
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+
+
+    text.hover {
+
+        font-weight: bold;
+        pointer-events: none;
+        fill: #ffffff;
+        stroke-width: 0px;
+        cursor: hand;
+
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    .little-button,
+    .little-button:hover {
+        width: 80px;
+        height: 30px;
+        font-size: 12px;
+
+        margin-right: 5px;
+    }
+
+
+
+    #renamer .inner {
+
+        width: 190px;
+        margin: 5px;
+    }
+
+    #renamer textarea.rename-title {
+        height: 50px;
+    }
+
+
+    #renamer {
+        position: absolute;
+        width: 290px;
+        background: #c0c0c0;
+        opacity: 0.8;
+        padding: 10px;
+        border: 1px solid #ff4d4a;
+        border-radius: 15px;
+    }
+
+    #renamer span {
+        font-family: "Verdana", Times, serif;
+    }
+
+    #renamer form {
+        border: 0px;
+        width: 100%;
+    }
+
+    #renamer textarea {
+        border: 1px solid #ff4d4a;
+        border-radius: 15px;
+        width: 85%;
+        height: 100px;
+        padding: 10px;
+        margin: 5px;
+        outline: none;
+        resize: none;
+        font-family: "Verdana", Times, serif;
+    }
+
+    #renamer input {
+        border: 1px solid #ff4d4a;
+        border-radius: 15px;
+        width: 85%;
+        padding: 10px;
+        outline: none;
+        margin: 5px;
+        font-family: "Verdana", Times, serif;
+    }
+
+    .parent {
+        stroke: #00ff00;
+    }
+
+
+    .leaf {
+        stroke: #00ffff;
+    }
+
+    .plus {
+        fill: #ff00ff;
+        stroke: "#90ff90;
+ stroke-width:1px;
+    }
+
+    .minus {
+        fill: #00ffff;
+        stroke: "#ffff90;
+ stroke-width:1px;
+    }
+
+
+
+    .hyperlink {
+
+        font-style: italic;
+        fill: #ff4d4a;
+    }
+
+
+
+    .d3-context-menu {
+        position: absolute;
+        display: none;
+        background-color: #f2f2f2;
+        border-radius: 4px;
+
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        min-width: 150px;
+        border: 1px solid #d4d4d4;
+
+        z-index: 1200;
+    }
+
+    .d3-context-menu ul {
+        list-style-type: none;
+        margin: 4px 0px;
+        padding: 0px;
+        cursor: default;
+    }
+
+    .d3-context-menu ul li {
+        padding: 4px 16px;
+    }
+
+    .d3-context-menu ul li:hover {
+        background-color: #4677f8;
+        color: #fefefe;
+    }
+
+    #container {
+        background: transparent;
+    }
+
+    svg {
+        border: 1px solid #ff4d4a;
+    }
+
+
+    button {
+        background-color: #ffffff;
+        border: 3px solid #45454a;
+        border-radius: 20px;
+        padding: 0px;
+        font-size: 16px;
+        width: 158px;
+        height: 40px;
+        margin: 0px;
+        color: #45454a;
+        outline: none;
+    }
+
+    button:hover {
+        background-color: #ff4d4a;
+        border: 3px solid #ff4d4a;
+        border-radius: 20px;
+        padding: 0px;
+        font-size: 16px;
+        width: 158px;
+        height: 40px;
+        margin: 0px;
+        color: #ffffff;
+        outline: none;
+    }
 }
-
-
-rect  {
-
-    fill:#ffffff;
-    stroke:#45454a;
-    stroke-width:3px;
-
-}
-
-rect.hover {
-
-    fill:#ff4d4a;
-    stroke:#45454a;
-    stroke-width:0px;
-}
-
-text {
-
-    
-    font-family:sans-serif;
-    font-weight:bold;
-    pointer-events: none;
-    fill:#000000;
-    stroke-width:0px;
-    cursor:hand;  
-
-  
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-
-}
-
-
-
-text.hover {
-
-    font-weight:bold;
-    pointer-events: none;
-    fill:#ffffff;
-    stroke-width:0px;
-    cursor:hand;
-
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-
-}
-
-.little-button, .little-button:hover
-{
-    width:80px;
-    height:30px;
-    font-size:12px;
-    float:left;
-    margin:5px;
-}
-
-
-
-.rename-textarea
-{
-    border:1px solid #ff4d4a;
-    border-radius:15px;
-    width:250px;
-    height:100px;
-    padding:10px;
-    outline: none;
-    float:left;
-}
-
-.rename-form{ width:250px; }
-
-.parent {
-    stroke:#00ff00;
-}
-
-
-.leaf {
-    stroke:#00ffff;
-
-}
-
-.plus {
-    fill:#ff00ff;
-    stroke:"#90ff90;
-    stroke-width:1px;
-}
-
-.minus {
-    fill:#00ffff;
-    stroke:"#ffff90;
-    stroke-width:1px;
- }
-
-
-
-.hyperlink {
-
-    font-style:italic;
-    fill:#ff4d4a;
-}
-
-
-.d3-context-menu {
-	position: absolute;
-	display: none;
-	background-color: #f2f2f2;
-	border-radius: 4px;
-
-	font-family: Arial, sans-serif;
-	font-size: 14px;
-	min-width: 150px;
-	border: 1px solid #d4d4d4;
-
-	z-index:1200;
-}
-
-.d3-context-menu ul {
-	list-style-type: none;
-	margin: 4px 0px;
-	padding: 0px;
-	cursor: default;
-}
-
-.d3-context-menu ul li {
-	padding: 4px 16px;
-}
-
-.d3-context-menu ul li:hover {
-	background-color: #4677f8;
-	color: #fefefe;
-}
-
-#container{  border:1px solid red; background: transparent;}
-
-
-button {
-    background-color:#ffffff;
-    border:3px solid #45454a;
-    border-radius:20px;
-    padding:0px;
-    font-size: 16px;
-    width:158px;
-    height:40px;    
-    margin:0px;
-    color:#45454a;
-    outline: none;
-
-}
-
-button:hover {
-    background-color:#ff4d4a;
-    border:3px solid #ff4d4a;
-    border-radius:20px;
-    padding:0px;
-    font-size: 16px;
-    width:158px;
-    height:40px;    
-    margin:0px;
-    color:#ffffff;
-    outline: none;
-
-}
-}
-
-
 </style>
+
 <body onload="makeD3( { 'editable': true } )">
 
 
-<div id="container">
+    <div id="container">
 
 
-</div>
-<textarea id="result"></textarea>
-<!--div id="buttons">
-<button id="expandAll">Expand all...</button><br>
-<button id="collapseAll">Collapse all...</button>
-</div-->
+    </div>
+    <textarea id="result"></textarea>
 
-<script src="//d3js.org/d3.v3.min.js"></script>
+    <script src="//d3js.org/d3.v3.min.js"></script>
 
-<script>
+    <script>
+        function makeD3(options) {
 
+            var lastNodeID = 0;
 
+            if (typeof JSON.clone !== "function") {
+                JSON.clone = function(obj) {
+                    return JSON.parse(JSON.stringify(obj));
+                };
+            }
 
-function makeD3( options )
-{
-
-var lastNodeID = 0;
-
-if (typeof JSON.clone !== "function") {
-    JSON.clone = function(obj) {
-        return JSON.parse(JSON.stringify(obj));
-    };
-}
-
-var enableEdit = options && options.editable;
+            var enableEdit = options && options.editable;
 
 
 
-d3.contextMenu = function (menu, openCallback) {
+            d3.contextMenu = function(menu, openCallback) {
 
-	// create the div element that will hold the context menu
-	d3.selectAll('.d3-context-menu').data([1])
-		.enter()
-		.append('div')
-		.attr('class', 'd3-context-menu');
+                // create the div element that will hold the context menu
+                d3.selectAll('.d3-context-menu').data([1])
+                    .enter()
+                    .append('div')
+                    .attr('class', 'd3-context-menu');
 
-	// close menu
-	d3.select('body').on('click.d3-context-menu', function() {
-		d3.select('.d3-context-menu').style('display', 'none');
-	});
+                // close menu
+                d3.select('body').on('click.d3-context-menu', function() {
+                    d3.select('.d3-context-menu').style('display', 'none');
+                });
 
-	// this gets executed when a contextmenu event occurs
-	return function(data, index) {	
-		var elm = this;
+                // this gets executed when a contextmenu event occurs
+                return function(data, index) {
+                    var elm = this;
 
-		d3.selectAll('.d3-context-menu').html('');
-		var list = d3.selectAll('.d3-context-menu').append('ul');
-		list.selectAll('li').data(menu).enter()
-			.append('li')
-			.html(function(d) {
-				return d.title;
-			})
-			.on('click', function(d, i) {
-				d.action(elm, data, index);
-				d3.select('.d3-context-menu').style('display', 'none');
-			});
+                    d3.selectAll('.d3-context-menu').html('');
+                    var list = d3.selectAll('.d3-context-menu').append('ul');
+                    list.selectAll('li').data(menu).enter()
+                        .append('li')
+                        .html(function(d) {
+                            return d.title;
+                        })
+                        .on('click', function(d, i) {
+                            d.action(elm, data, index);
+                            d3.select('.d3-context-menu').style('display', 'none');
+                        });
 
-		// the openCallback allows an action to fire before the menu is displayed
-		// an example usage would be closing a tooltip
-		if (openCallback) openCallback(data, index);
+                    // the openCallback allows an action to fire before the menu is displayed
+                    // an example usage would be closing a tooltip
+                    if (openCallback) openCallback(data, index);
 
-		// display context menu
-		d3.select('.d3-context-menu')
-			.style('left', (d3.event.pageX - 2) + 'px')
-			.style('top', (d3.event.pageY - 2) + 'px')
-			.style('display', 'block');
+                    // display context menu
+                    d3.select('.d3-context-menu')
+                        .style('left', (d3.event.pageX - 2) + 'px')
+                        .style('top', (d3.event.pageY - 2) + 'px')
+                        .style('display', 'block');
 
-		d3.event.preventDefault();
-	};
-};
-
-
-d3.selection.prototype.moveToFront = function() {
-    return this.each(function() {
-        this.parentNode.appendChild(this);
-    });
-};
+                    d3.event.preventDefault();
+                };
+            };
 
 
-var width = 960,
-    height = 500,
-    root = null,
-    rectWidth = 120,
-    rectHeight = 20,
-    radius = 15,
-    textXMargin = 10,
-    textYMargin = 10,
-    boxRadius = 20,
-    zoom = 1.3,
-    animInTime = 200,
-    animOutTime = 700,
-    fontSize = 12,
-    boundingRadius = 20
+            d3.selection.prototype.moveToFront = function() {
+                return this.each(function() {
+                    this.parentNode.appendChild(this);
+                });
+            };
 
 
-		
-		
-		
+            var width = 960,
+                height = 500,
+                root = null,
+                rectWidth = 120,
+                rectHeight = 20,
+                radius = 15,
+                textXMargin = 10,
+                textYMargin = 10,
+                boxRadius = 20,
+                zoom = 1.3,
+                animInTime = 200,
+                animOutTime = 700,
+                fontSize = 12,
+                boundingRadius = 1,
+                linkWeight = 2
 
 
-var root = {
-    "name": "flare",
-    "url": "http://google.com",
-    "children": [{
-            "name": "analytics",
-            "children": [{
-                    "name": "cluster",
-                    "url": "http://google.com",
+
+            function wrap(text, width) {
+                text.each(function() {
+
+                    var text = d3.select(this),
+                        words = text.attr("title").split(/\r?\n/)
+
+                    interline = 10;
+
+                    lines = 0
+
+                    text.text("");
+
+                    words.forEach(function(word) {
+                        tspan = text.append("tspan").attr("x", 0).attr("dy", fontSize).text(word);
+                    })
+
+
+                })
+            }
+
+
+
+            var root = {
+                "name": "Flare\nMultiline",
+                "url": "http://google.com",
+                "children": [{
+                    "name": "analytics",
                     "children": [{
-                            "name": "AgglomerativeCluster",
-                            "url": "http://google.com"
+                            "name": "Sinister\ncluster",
+                            "url": "http://google.com",
+                            "children": [{
+                                    "name": "AgglomerativeCluster",
+                                    "url": "http://google.com"
+                                },
+                                {
+                                    "name": "CommunityStructure",
+                                    "url": "http://google.com"
+                                },
+                                {
+                                    "name": "Structure",
+                                    "url": "http://google.com"
+                                },
+                                {
+                                    "name": "Community",
+                                    "url": "http://google.com"
+                                },
+                                {
+                                    "name": "HierarchicalCluster",
+                                    "url": "http://google.com"
+                                },
+                                {
+                                    "name": "MergeEdge",
+                                    "url": "http://google.com"
+                                }
+                            ]
                         },
                         {
-                            "name": "CommunityStructure",
-                            "url": "http://google.com"
-                        },
-                        {
-                            "name": "Structure",
-                            "url": "http://google.com"
-                        },
-                        {
-                            "name": "Community",
-                            "url": "http://google.com"
-                        },
-                        {
-                            "name": "HierarchicalCluster",
-                            "url": "http://google.com"
-                        },
-                        {
-                            "name": "MergeEdge",
-                            "url": "http://google.com"
-                        }
-                    ]
-                },
-                {
                             "name": "Boh",
                             "url": "http://google.com"
-                    },
-                {
-                    "name": "graph",
-                    "url": "http://google.com",
-                    "children": [{
-                            "name": "BetweennessCentrality",
-                            "url": "http://google.com"
                         },
                         {
-                            "name": "LinkDistance",
-                            "url": "http://google.com"
+                            "name": "graph",
+                            "url": "http://google.com",
+                            "children": [{
+                                    "name": "BetweennessCentrality",
+                                    "url": "http://google.com"
+                                },
+                                {
+                                    "name": "LinkDistance",
+                                    "url": "http://google.com"
+                                },
+                                {
+                                    "name": "MaxFlow\nMinCut",
+                                    "url": "http://google.com"
+                                },
+                                {
+                                    "name": "ShortestPaths",
+                                    "url": "http://google.com"
+                                },
+                                {
+                                    "name": "SpanningTree",
+                                    "url": "http://google.com"
+                                }
+                            ]
                         },
                         {
-                            "name": "MaxFlowMinCut",
-                            "url": "http://google.com"
-                        },
-                        {
-                            "name": "ShortestPaths",
-                            "url": "http://google.com"
-                        },
-                        {
-                            "name": "SpanningTree",
-                            "url": "http://google.com"
+                            "name": "optimization",
+                            "url": "http://google.com",
+                            "children": [{
+                                "name": "AspectRatioBanker",
+                                "url": "http://google.com"
+                            }]
                         }
                     ]
-                },
-                {
-                    "name": "optimization",
-                    "url": "http://google.com",
-                    "children": [{
-                        "name": "AspectRatioBanker",
-                        "url": "http://google.com"
-                    }]
-                }
-            ]
-        }
-    ]
-}
+                }]
+            }
 
-                    
-    var mainMenu = [
-        {
-            title: 'Add new node',
-            action: function(elm, d, i) {
-            
 
-                        var newNode = JSON.clone( emptyNode );
+            var mainMenu = [{
+                    title: 'Add new node',
+                    action: function(elm, d, i) {
+
+
+                        var newNode = JSON.clone(emptyNode);
                         newNode.id = ++lastNodeID;
-                        newNode.name = "Node #"+ lastNodeID;
+                        newNode.name = "Node #" + lastNodeID;
                         newNode.isLeaf = true;
-                        newNode.x = width / 2 +150 ;
-                        newNode.y = height / 2 + 150 ;
-                        
-                        if ( !Array.isArray( root ) )
-                        {
+                        newNode.x = width / 2 + 150;
+                        newNode.y = height / 2 + 150;
+
+                        if (!Array.isArray(root)) {
                             root = [root];
                         }
 
-                        root.push( newNode );   
-                        update( root);
-                    
-           
-            }
-        },
-        {
-            title: 'Expand all',
-            action: function(elm, d, i) {
-            }
-            
-        },
-        {
-            title: 'Collapse all',
-            action: function(elm, d, i) {
-            }
-            
-        }
-    ]
-    
-    var input;
+                        root.push(newNode);
+                        update(root);
 
 
-    var menu = [
-        {
-            title: 'Add sub node',
-            action: function(elm, d, i) {
-            
-                if ( d )
-                {
-                    var nn = findNode( d.id, root );
-                    console.log( d.id );
-                    console.log("-----------");
-                    console.log( nn );
-                    if ( nn.isLeaf )
-                    {
-                        nn.children = [];
-                        nn._children = null;
-                    }                    
-                    
-                    var child = nn.children || nn._children || null;
-                    
-                    //console.log( child );
-                    
-                    if ( child )
-                    {
-                        var newNode = JSON.clone( emptyNode );
-                        newNode.id = ++lastNodeID;
-                        newNode.name = "Node #"+ lastNodeID;
-                        newNode.x = nn.x + 100 ;
-                        newNode.y = nn.y + 100 ;
-                        child.push( newNode );
-                        nn.isLeaf=false;
-                        var tt = svg.select("#JIKU_MM_RECT_" + nn.id );
-
-                        if (tt ) 
-                        {
-                            tt.attr( "class", "parent" );
-                        }
-                        //collapse( [nn] )
-                        //collapse( [nn] )
-                        update(root)
                     }
-                  
-                    
-                    
                 }
-            }
-        },
-        {
-            title: 'Rename node',
-            action: function(elm, d, i) {
-            
-                if ( d )
+                /*,
+                        {
+                            title: 'Expand all',
+                            action: function(elm, d, i) {
+                            }
+                            
+                        },
+                        {
+                            title: 'Collapse all',
+                            action: function(elm, d, i) {
+                            }
+                            
+                        }*/
+            ]
+
+            var input;
+
+
+            var menu = [{
+                    title: 'Add sub node',
+                    action: function(elm, d, i) {
+
+                        if (d) {
+                            var nn = findNode(d.id, root);
+                            console.log(d.id);
+                            console.log("-----------");
+                            console.log(nn);
+                            if (nn.isLeaf) {
+                                nn.children = [];
+                                nn._children = null;
+                            }
+
+                            var child = nn.children || nn._children || null;
+
+                            if (child) {
+                                var newNode = JSON.clone(emptyNode);
+                                newNode.id = ++lastNodeID;
+                                newNode.name = "Node #" + lastNodeID;
+                                newNode.x = nn.x + 100;
+                                newNode.y = nn.y + 100;
+                                child.push(newNode);
+                                nn.isLeaf = false;
+                                var tt = svg.select("#JIKU_MM_RECT_" + nn.id);
+
+                                if (tt) {
+                                    tt.attr("class", "parent");
+                                }
+                                //collapse( [nn] )
+                                //collapse( [nn] )
+                                update(root)
+                            }
+
+
+
+                        }
+                    }
+                },
                 {
-                    console.log( d )
-                    var nn = findNode( d.id, root );            
-                    var tt = svg.select("#JIKU_MM_TEXT_" + nn.id )[0][0];
-                    if ( tt )
-                    {
-                        var txt = nn.name;
-                        console.log( txt );
-                        
-                        var txtElem= d3.select(tt);                       
+                    title: 'Edit node',
+                    action: function(elm, d, i) {
 
-                        
-                        frm  = d3.select("body").append("div").attr("id","renamer").attr("style","position:absolute;top:"+ d.y + "px; left:" + d.x + "px;")
-                        
-                        var removed = false;
-   
-                        form = frm
-                                .attr("x", d.x)
-                                .attr("y", d.y)
-                                .append("xhtml:form")
-                                .classed("rename-form", true)
-                                
-                        inp = form
-                                .append("textarea")
-                                
-                                inp
-                                .classed("rename-textarea", true)
-                                .attr("value", function() {
-                                                // nasty spot to place this call, but here we are sure that the <input> tag is available
-                                                // and is handily pointed at by 'this':
-                                                this.focus();
-                                                
-                                                inp[0][0].value = txt;
+                        if (d) {
+                            console.log(d)
+                            var nn = findNode(d.id, root);
+                            var tt = svg.select("#JIKU_MM_TEXT_" + nn.id)[0][0];
+                            if (tt) {
+                                var txt = nn.name;
+                                var textcontent = nn.textcontent || ""
 
 
-                                                return txt;
-                                            })
-                                
-                                .on("keypress", function(e) {
-                                                //console.log("keypress", this, arguments);
-                                                
-                                                //detachEvent(frm, 'blur', onblur);
+                                var txtElem = d3.select(tt);
 
-                                                // IE fix
-                                                if (!d3.event)
-                                                    d3.event = window.event;
+                                coords = getAbsoluteCoords(d.x, d.y);
 
-                                                var e = d3.event;
-                                                
-                                                if (e.keyCode === 27) //ESC
-                                                {
-                                                    d3.selectAll("div#renamer").remove();
-                                                }
+                                function submit() {
+                                    var _title = title.node().value;
 
-                        
-                        
-                                    
+                                    nn.name = _title;
+
+                                    txtElem.attr("title", _title).call(wrap);
+
+                                    var _content = inp.node().value;
+                                    nn.textcontent = _content;
+
+
+                                    removed = true;
+                                    d3.selectAll("div#renamer").remove();
+                                    update(root);
+                                }
+
+                                frm = d3.select("body").append("div").attr("id", "renamer").attr("style", "top:" + coords.y + "px; left:" + coords.x + "px;")
+
+                                var removed = false;
+
+                                form = frm
+                                    .attr("x", d.x)
+                                    .attr("y", d.y)
+                                    .append("xhtml:form")
+                                    .on("submit", function() {
+                                        d3.event.preventDefault();
+                                        return null;
+                                    })
+                                    .classed("rename-form", true)
+
+                                form.append("span").text("Titolo")
+
+                                title = form
+                                    .append("textarea")
+                                    .classed("rename-title", true)
+
+
+
+                                title
+                                    .attr("placeholder", "Inserire il titolo...")
+                                    .attr("value", function() {
+                                        this.focus();
+                                        title[0][0].value = txt;
+                                        return txt;
+                                    })
+
+                                form.append("span").text("Contenuto")
+
+                                inp = form
+                                    .append("textarea")
+                                    .attr("placeholder", "Inserire il contenuto...")
+                                    .classed("rename-form", true)
+
+                                inp.attr("value", function() {
+
+                                    inp[0][0].value = textcontent;
+                                    return textcontent;
                                 })
-                                
-                                 buttAnnulla = frm.append("xhtml:button")
-                                .classed("little-button", true)
-                                .text("Annulla")
-                                .on("click", function()
-                                {
+
+                                buttContainer = form.append("div")
+
+                                buttContainer.classed("inner", true)
+
+
+                                canc = buttContainer.append("xhtml:button")
+                                    .classed("little-button", true)
+                                    .text("Annulla")
+                                    .on("click", function() {
                                         removed = true;
                                         d3.selectAll("div#renamer").remove();
                                         //update( root );
-                                                    
-                                })
-                                
-                                buttOK = frm.append("xhtml:button")
-                                .classed("little-button", true)
-                                .text("Salva")
-                                .on("click", function()
-                                {
-                                        var txt = inp.node().value;
-                                        //alert(txt);
 
-                                        txtElem.text(function(d) { return txt; });
-                                        nn.name = txt;
+                                    })
 
-                                        // odd. Should work in Safari, but the debugger crashes on this instead.
-                                        // Anyway, it SHOULD be here and it doesn't hurt otherwise.
-                                        removed = true;
-                                        d3.selectAll("div#renamer").remove();
-                                        //update( root );
-                                })
-                                
+
+
+
+                                ok = buttContainer.append("xhtml:button")
+                                    .classed("little-button", true)
+                                    .text("Salva")
+                                    .on("click", submit)
+
                                 w = d3.select('svg').clientWidth;
                                 h = d3.select('svg').clientHeight;
-                                
-                                
+
                                 _bound = d3.select(renamer).node().getBoundingClientRect();
-                                
+
                                 px = _bound.left;
                                 py = _bound.top;
-                                //ww = bound.
-                                
-                                console.log( d3.select(renamer) )
-                                
-                                
-                                
+
+                                console.log(d3.select(renamer))
+
+                            }
+                        }
+                    }
+
+                },
+                {
+                    title: 'Remove node',
+                    action: function(elm, d, i) {
+                        if (d) {
+                            var nn = removeNode(d.id, root);
+                            update(root);
                         }
                     }
                 }
-            
-        },
-        {
-            title: 'Remove node',
-            action: function(elm, d, i) {
-                if ( d )
-                {
-                    var nn = removeNode( d.id, root );
-                    update( root );
-                }
+            ]
+
+
+
+            var emptyNode = {
+                "name": "New node",
+                "isLeaf": true,
+                "url": "h"
+
             }
-        }
-    ]
-    
-    
-    
-/*
 
-    // from file ...
-    
-d3.json("data.json", function(error, json) {
-  if (error) throw error;
 
-  root = json;
-  update();
-});
+            var force = d3.layout.force()
 
-*/
+                .size([width, height])
+                .on("tick", tick)
 
-var emptyNode = {
-                        "name": "New node",
-                        "isLeaf":true,
-                        "url": "h"
-                       
+
+
+            var div = d3.selectAll("div#container")
+
+            div.style("width", width).style("height", height);
+
+            if (enableEdit) {
+                div.on('contextmenu', d3.contextMenu(mainMenu));
+            }
+
+            var svg = div.append("svg")
+                .attr("width", width)
+                .attr("height", height)
+
+
+
+
+            var link = svg.selectAll(".link"),
+                node = svg.selectAll(".node");
+
+
+            var rootNodes = findRootNodes(root);
+
+
+            update(root)
+            collapse(findRootNodes(root));
+            update(root)
+
+
+            function getAbsoluteCoords(x, y) { // crossbrowser version
+
+
+                var body = document.body;
+                var docEl = document.documentElement;
+
+                var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
+                var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
+
+                var clientTop = docEl.clientTop || body.clientTop || 0;
+                var clientLeft = docEl.clientLeft || body.clientLeft || 0;
+
+                var top = y + scrollTop - clientTop;
+                var left = x + scrollLeft - clientLeft;
+
+                return {
+                    y: Math.round(top),
+                    x: Math.round(left)
+                };
+            }
+
+            function resize(e) {
+
+                console.log(this);
+
+
+                width = window.innerWidth * 0.9, height = window.innerHeight * 0.9;
+                svg.attr("width", width).attr("height", height);
+                force.size([width, height]).resume();
+
+                svg.append("svg:rect")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .style("stroke", "#000");
+
+            }
+
+            var flroot;
+
+
+
+
+            function update(root) {
+
+
+                var nodes = flatten(root),
+                    links = d3.layout.tree().links(nodes)
+
+
+                flroot = nodes;
+
+                rootNodes = findRootNodes(root);
+
+                if (enableEdit) {
+                    console.log(filterAll(root));
+                    document.getElementById("result").value = JSON.stringify(filterAll(root));
+                }
+                //console.log( root );
+
+
+                // Restart the force layout.
+                force
+                    .nodes(nodes)
+                    .links(links)
+                    .linkDistance(fontSize * 10)
+                    .charge(-520)
+                    .gravity(.05)
+                    .size([width, height])
+                    .start();
+
+
+                var drag = force.drag()
+
+
+                // Update links.
+                link = link.data(links, function(d) {
+                    return d.target.id;
+                })
+
+
+                link.exit().remove();
+
+                link.enter().insert("line", ".node")
+                    .attr("class", "link")
+                    .style("stroke-width", linkWeight)
+                    .attr("marker-end", "url(#end)");
+
+                // Update nodes.
+                node = node.data(nodes, function(d) {
+                    return d.id;
+                });
+
+                node.exit().remove();
+
+
+                var nodeEnter = node.enter().append("g")
+                    .attr("class", "node")
+                    .on("click", onclick)
+                    .on("touchstart", onclick)
+                    .on("mouseover", mouseover)
+                    .on("mouseout", mouseout)
+                    .call(drag)
+
+
+
+                var a = nodeEnter.append("a")
+
+
+                var rect = a.append("rect")
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("rx", boxRadius)
+                    .attr("ry", boxRadius)
+                    .attr("height", rectHeight)
+                    .attr("width", rectWidth)
+                    .attr("id", function(d) {
+                        return "JIKU_MM_RECT_" + d.id;
+                    })
+                    .attr("class", function(d) {
+                        if (hasValue(d.isLeaf)) {
+                            if (d.isLeaf) {
+                                return "leaf";
+                            } else {
+                                return "parent"
+
+                            }
+                        }
+
+                    })
+
+
+
+
+                var txt = a.append("text")
+
+
+                    .attr("class", "text")
+                    .style("text-anchor", "middle")
+                    .style("font-size", fontSize + "px")
+                    .attr("id", function(d) {
+                        return "JIKU_MM_TEXT_" + d.id;
+                    })
+                    .attr("class", function(d) {
+                        if (d.url) {
+                            return "hyperlink";
+                        }
+                    })
+                    .attr("title", function(d) {
+                        return d.name;
+                    })
+                    .call(wrap);
+
+
+
+                var anchors = d3.selectAll('g > a');
+
+                if (enableEdit) {
+                    a.on('contextmenu', d3.contextMenu(menu));
                 }
 
-
-var force = d3.layout.force()
-    .linkDistance(140)
-    .charge(-320)
-    .gravity(.075)
-    .size([width, height])
-    .on("tick", tick)
-    
-    
-
-var div =  d3.selectAll("div#container")
-
-if ( enableEdit )
-{
-    div.on('contextmenu', d3.contextMenu(mainMenu));
-}   
-
-var svg = div.append("svg")
-    .attr("width", width)
-    .attr("height", height)
-
-    
-
-    
-var link = svg.selectAll(".link"),
-    node = svg.selectAll(".node");
+                anchors[0].forEach(function(elem) {
 
 
-var rootNodes = findRootNodes(root);
+                    childs = elem.childNodes;
+
+                    var _rect = childs[0];
+                    var _text = childs[1];
+
+                    var textSize = _text.getBBox();
 
 
-update(root)
-collapse(findRootNodes(root));
-update(root)
-
-function resize(e) {
-
-    console.log( this );
+                    w = textSize.width + 2 * textXMargin;
+                    h = textSize.height + 2 * textYMargin;
 
 
-    width = window.innerWidth * 0.9, height = window.innerHeight * 0.9;
-    svg.attr("width", width).attr("height", height);
-    force.size([width, height]).resume();
+                    _rect.setAttribute("x", -w / 2);
+                    _rect.setAttribute("y", -h / 2);
 
-    svg.append("svg:rect")
-        .attr("width", width)
-        .attr("height", height)
-        .style("stroke", "#000");
+                    _text.setAttribute("y", -h / 2 + fontSize / 1.5);
 
-}
+                    _rect.setAttribute("width", w)
+                    _rect.setAttribute("height", h)
 
-var flroot;
+
+
+                });
+
+
+            }
 
 
 
 
-function update(root) {
+            function clickcancel() {
+                var event = d3.dispatch('click', 'dblclick');
+
+                function cc(selection) {
+                    var down,
+                        tolerance = 5,
+                        last,
+                        wait = null;
+                    // euclidean distance
+                    function dist(a, b) {
+                        if (a !== null && b !== null && Array.isArray(a) && Array.isArray(b) && a.length > 1 && b.length > 1) {
+                            return Math.sqrt(Math.pow(a[0] - b[0], 2), Math.pow(a[1] - b[1], 2));
+                        }
+                        return 0;
+                    }
+                    selection.on('mousedown', function() {
+                        down = d3.mouse(document.body);
+                        last = +new Date();
+                    });
+                    selection.on('mouseup', function() {
+                        if (dist(down, d3.mouse(document.body)) > tolerance) {
+                            return;
+                        } else {
+                            if (wait) {
+                                window.clearTimeout(wait);
+                                wait = null;
+                                event.dblclick(d3.event);
+                            } else {
+                                wait = window.setTimeout((function(e) {
+                                    return function() {
+                                        event.click(e);
+                                        wait = null;
+                                    };
+                                })(d3.event), 300);
+                            }
+                        }
+                    });
+                };
+                return d3.rebind(cc, event, 'on');
+            }
 
 
-    var nodes = flatten(root),
-        links = d3.layout.tree().links(nodes)
-            
 
-    flroot = nodes;
-    
-    rootNodes = findRootNodes(root);
-    
-    if ( enableEdit )
-    {
-        console.log( filterAll( root ) );
-        document.getElementById("result").value = JSON.stringify( filterAll( root ) );
-    }
-    //console.log( root );
+            function bound(coord, max, radius) {
+
+                return Math.max(radius, Math.min(max - radius, coord));
+
+            }
 
 
-    // Restart the force layout.
-    force
-        .nodes(nodes)
-        .links(links)
-        .linkDistance(fontSize * 10)
-        .charge(-520)
-        .gravity(.05)
-        .size([width, height])
-        .start();
+
+            function tick() {
+
+                link.attr("x1", function(d) {
+                        return bound(d.source.x, width, boundingRadius);
+                    })
+                    .attr("y1", function(d) {
+                        return bound(d.source.y, height, boundingRadius);
+                    })
+                    .attr("x2", function(d) {
+                        return bound(d.target.x, width, boundingRadius);
+                    })
+                    .attr("y2", function(d) {
+                        return bound(d.target.y, height, boundingRadius);
+                    });
 
 
-    var drag = force.drag()
+                node.attr("transform", function(d) {
 
 
-    // Update links.
-    link = link.data(links, function(d) {
-        return d.target.id;
-    })
-    
+                    return "translate(" +
+                        bound(d.x, width, 30) + "," +
+                        bound(d.y, height, 20) + ")";
+                });
 
-    link.exit().remove();
+                //node.each(collide(0.5))
 
-    link.enter().insert("line", ".node")
-        .attr("class", "link")
-        .style("stroke-width", function(d) { return Math.sqrt(d.value); })
-        .attr("marker-end", "url(#end)");
-
-    // Update nodes.
-    node = node.data(nodes, function(d) {
-        return d.id;
-    });
-
-    node.exit().remove();
-    
-
-    var nodeEnter = node.enter().append("g")
-        .attr("class", "node")
-        .on("click", onclick)
-        .on("touchstart" , onclick)
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseout)
-        .call(drag)
-
-        
-
-    var a = nodeEnter.append("a")
+            }
 
 
-    var rect = a.append("rect")
-        .attr("x", 0)
-        .attr("y", 0)
-        .attr("rx", boxRadius)
-        .attr("ry", boxRadius)
-        .attr("height", rectHeight)
-        .attr("width", rectWidth)
-        .attr("id", function(d) { return "JIKU_MM_RECT_" + d.id; } )
-        .attr("class", function(d) {
-            if (hasValue(d.isLeaf)) {
-                if (d.isLeaf) {
-                    return "leaf";
+            function dragstart(d) {
+
+                d3.event.sourceEvent.stopPropagation();
+            }
+
+            function dragend(d) {
+
+                d3.event.sourceEvent.stopPropagation();
+            }
+
+            function hasValue(d) {
+                return d !== null && typeof d !== 'undefined';
+
+            }
+
+            function hasChilds(d) {
+                var ret = false;
+
+                ret = hasValue(d.children) || hasValue(d._children);
+
+                return ret;
+
+            }
+
+
+            function collapse(nodes) {
+
+                nodes.forEach(function(d) {
+
+                    if (d.children) {
+
+                        if (hasValue(d)) {
+                            console.log("Collapsing " + d.id);
+                            var jNode = findJsonNode(d.id, flroot);
+
+                            console.log(jNode.id + " has CHILD collapsed, was " + jNode.status);
+                            jNode.status = "collapsed";
+
+                            //jNode.isLeaf = false;
+
+
+                        }
+
+
+                        d._children = d.children;
+                        d.children = null;
+
+                    } else {
+                        d.children = d._children;
+                        d._children = null;
+
+                        if (hasChilds(d)) {
+                            console.log("Expanding " + d.id);
+
+                            var jNode = findJsonNode(d.id, flroot);
+
+                            console.log(jNode.id + " has CHILD expanded, was " + jNode.status);
+
+                            jNode.status = "expanded";
+
+                            //jNode.isLeaf = false;
+                        }
+
+
+                    }
+
+
+                });
+
+
+
+            }
+
+
+
+
+            function findJsonNode(id, root) {
+
+                if (hasValue(root)) {
+                    for (i = 0; i < root.length; i += 1) {
+                        if (root[i].id === id) {
+                            return root[i];
+                        }
+                    }
+                }
+
+                return null;
+            }
+
+            function removeNode(id, _root) {
+
+                var i,
+                    elem;
+
+                console.log("Removing " + id);
+
+                if (Array.isArray(_root)) {
+
+                    for (i = 0; i < _root.length; i++) {
+
+                        elem = _root[i];
+
+
+                        if (elem.id == id) {
+                            _root.splice(i, 1);
+                        } else {
+                            _remove(id, elem);
+                        }
+
+                    }
+
                 } else {
-                    return "parent"
-
-                }
-            }
-
-        })
-        
-
-
-
-    var txt = a.append("text")
-        .attr("class", "text")
-        .style("text-anchor", "middle")
-        .style("font-size", fontSize + "px")
-        .attr("id", function(d) { return "JIKU_MM_TEXT_" + d.id; } )
-        .attr("class", function(d) {
-            if (d.url) {
-                return "hyperlink";
-            }
-        })
-        .text(function(d) {
-            return d.name;
-        })
-
-
-//     var circlePlus = a.append( "circle" )
-//         .attr("class", "plus")
-//         .attr("r",10)
-//         .on("click", onclickplus)
-//         .on("touchstart" , onclickplus)
-//     
-//     var circleMinus = a.append( "circle" )
-//         .attr("class", "minus")
-//         .attr("r",10)
-//         .on("click", onclickminus)
-//         .on("touchstart" , onclickminus)
-
-    var anchors = d3.selectAll('g > a');
-    
-        if ( enableEdit )
-        {
-            a.on('contextmenu', d3.contextMenu(menu) );
-        }
-
-    anchors[0].forEach(function(elem) {
-    
-
-        childs = elem.childNodes;        
-        
-        var _rect = childs[0];
-        var _text = childs[1];
-//         var _cplus = childs[2];
-//         var _cminus = childs[3];
-        
-        var textSize = _text.getBBox();
-
-
-
-        w = textSize.width + 2 * textXMargin;
-        h = textSize.height + 2 * textYMargin;
-
-
-        _rect.setAttribute("x", -w / 2);
-        _rect.setAttribute("y", -h / 2);
-
-        _text.setAttribute("y", fontSize / 3);
-
-        _rect.setAttribute("width", w)
-        _rect.setAttribute("height", h)
-        
-//         _cplus.setAttribute( "cx", w /2);
-//         _cplus.setAttribute( "cy", -h/2 );
-//         _cminus.setAttribute( "cx", w/2 );
-//         _cminus.setAttribute( "cy", h/2 );
-
-
-    });
-
-
-}
-
-
-
-
-function clickcancel() {
-    var event = d3.dispatch('click', 'dblclick');
-
-    function cc(selection) {
-        var down,
-            tolerance = 5,
-            last,
-            wait = null;
-        // euclidean distance
-        function dist(a, b) {
-            if (a !== null && b !== null && Array.isArray(a) && Array.isArray(b) && a.length > 1 && b.length > 1) {
-                return Math.sqrt(Math.pow(a[0] - b[0], 2), Math.pow(a[1] - b[1], 2));
-            }
-            return 0;
-        }
-        selection.on('mousedown', function() {
-            down = d3.mouse(document.body);
-            last = +new Date();
-        });
-        selection.on('mouseup', function() {
-            if (dist(down, d3.mouse(document.body)) > tolerance) {
-                return;
-            } else {
-                if (wait) {
-                    window.clearTimeout(wait);
-                    wait = null;
-                    event.dblclick(d3.event);
-                } else {
-                    wait = window.setTimeout((function(e) {
-                        return function() {
-                            event.click(e);
-                            wait = null;
-                        };
-                    })(d3.event), 300);
-                }
-            }
-        });
-    };
-    return d3.rebind(cc, event, 'on');
-}
-
-
-
-function bound(coord, max, radius) {
-
-    return Math.max(radius, Math.min(max - radius, coord));
-
-}
-
-
-function tick() {
-
-    link.attr("x1", function(d) {
-            return bound(d.source.x, width, boundingRadius);
-        })
-        .attr("y1", function(d) {
-            return bound(d.source.y, height, boundingRadius);
-        })
-        .attr("x2", function(d) {
-            return bound(d.target.x, width, boundingRadius);
-        })
-        .attr("y2", function(d) {
-            return bound(d.target.y, height, boundingRadius);
-        });
-
-    node.attr("transform", function(d) {
-        return "translate(" +
-            bound(d.x, width, boundingRadius) + "," +
-            bound(d.y, height, boundingRadius) + ")";
-    });
-
-
-}
-
-
-function dragstart(d) {
-
-    d3.event.sourceEvent.stopPropagation();
-}
-
-function dragend(d) {
-
-    d3.event.sourceEvent.stopPropagation();
-}
-
-function hasValue(d) {
-    return d !== null && typeof d !== 'undefined';
-
-}
-
-function hasChilds(d) {
-    var ret = false;
-
-    ret = hasValue(d.children) || hasValue(d._children);
-
-    return ret;
-
-}
-
-
-function collapse(nodes) {
-
-    nodes.forEach(function(d) {
-
-        if (d.children) {
-
-            if (hasValue(d)) {
-                console.log("Collapsing " + d.id);
-                var jNode = findJsonNode(d.id, flroot);
-
-                console.log(jNode.id + " has CHILD collapsed, was " + jNode.status);
-                jNode.status = "collapsed";
-
-                //jNode.isLeaf = false;
-
-
-            }
-
-
-            d._children = d.children;
-            d.children = null;
-
-        } else {
-            d.children = d._children;
-            d._children = null;
-
-            if (hasChilds(d)) {
-                console.log("Expanding " + d.id);
-
-                var jNode = findJsonNode(d.id, flroot);
-
-                console.log(jNode.id + " has CHILD expanded, was " + jNode.status);
-
-                jNode.status = "expanded";
-
-               //jNode.isLeaf = false;
-            }
-
-
-        }
-
-
-    });
-
-
-
-}
-
-
-
-
-function findJsonNode(id, root) {
-
-    if (hasValue(root)) {
-        for (i = 0; i < root.length; i += 1) {
-            if (root[i].id === id) {
-                return root[i];
-            }
-        }
-    }
-
-    return null;
-}
-
-function removeNode(id, _root) {
-        
-        var i,
-            elem;
-
-        console.log( "Removing " + id );
-        
-        if (Array.isArray(_root))
-        {
-            
-            for ( i = 0; i< _root.length; i++ )
-            {
-            
-                elem = _root[i];
-
-                
-                if ( elem.id == id )
-                {
-                   _root.splice(i,1);
-                }
-                else
-                {
-                    _remove(id,  elem );
+                    _remove(id, _root)
                 }
 
-            }
+                function _remove(id, currentNode) {
+                    var _j, currentChild;
 
-        } 
-        else 
-        { 
-            _remove( id, _root )
-        }
-        
-        function _remove( id, currentNode )
-        {       
-            var _j, currentChild;
-            
-            if (hasValue(currentNode))
-            {    
-                 
-                if ( currentNode.children ) parseChilds(id,  currentNode.children );
-                if ( currentNode._children ) parseChilds( id, currentNode._children );
-                
-                
-                function parseChilds( id, childs)
-                {
+                    if (hasValue(currentNode)) {
 
-                    for( _j = 0;_j < childs.length; _j++ )
-                    {
-                            currentChild = childs[_j];
-                            
-                            //console.log(currentNode.name + ", numChilds=" +  childs.length +", index=" + _j + " name=" +currentChild.name +" id=" + currentChild.id );
-                            
-                            if ( currentChild.id == id )
-                            {
-                                console.log( "Found, removing ");
-                                childs.splice(_j, 1);
-                                if ( childs.length == 0 )
-                                {
-                                    currentNode.isLeaf = true;
-                                    
-                                    var tt = svg.select("#JIKU_MM_RECT_" + currentNode.id );
+                        if (currentNode.children) parseChilds(id, currentNode.children);
+                        if (currentNode._children) parseChilds(id, currentNode._children);
 
-                                    if (tt ) 
-                                    {
-                                        tt.attr( "class", "leaf" );
+
+                        function parseChilds(id, childs) {
+
+                            for (_j = 0; _j < childs.length; _j++) {
+                                currentChild = childs[_j];
+
+                                //console.log(currentNode.name + ", numChilds=" +  childs.length +", index=" + _j + " name=" +currentChild.name +" id=" + currentChild.id );
+
+                                if (currentChild.id == id) {
+                                    console.log("Found, removing ");
+                                    childs.splice(_j, 1);
+                                    if (childs.length == 0) {
+                                        currentNode.isLeaf = true;
+
+                                        var tt = svg.select("#JIKU_MM_RECT_" + currentNode.id);
+
+                                        if (tt) {
+                                            tt.attr("class", "leaf");
+                                        }
+
                                     }
-                                    
+                                    return currentChild;
+
+                                } else {
+                                    _remove(id, currentChild);
                                 }
-                                return currentChild;
-                        
+
                             }
-                            else
-                            {
-                                _remove(id, currentChild);
+                        }
+                    }
+
+                }
+
+
+            }
+
+            function filterAll(_currentNode) {
+
+                var i,
+                    elem;
+
+                var currentNode = JSON.clone(_currentNode);
+
+                console.log("Filtering ");
+
+                if (Array.isArray(currentNode)) {
+
+                    for (i = 0; i < currentNode.length; i++) {
+
+                        elem = currentNode[i];
+
+                        _filter(elem);
+
+                    }
+
+                } else {
+                    _filter(currentNode)
+                }
+
+                function _filter(currentNode) {
+                    var _j, currentChild;
+
+                    delete currentNode.x;
+                    delete currentNode.y;
+                    delete currentNode.px;
+                    delete currentNode.py;
+                    delete currentNode.weight;
+                    delete currentNode.isLeaf;
+                    delete currentNode.index;
+                    delete currentNode.size;
+                    delete currentNode.status;
+
+                    if (hasValue(currentNode)) {
+
+                        if (currentNode._children) {
+                            if (currentNode.children) {
+
+                            } else {
+                                currentNode.children = [];
                             }
 
-                    }  
-                }
-            }    
-
-        }
-
- 
-}
-
-function filterAll( _currentNode )
-{
-
-        var i,
-            elem;
-            
-        var currentNode = JSON.clone( _currentNode );
-
-        console.log( "Filtering " );
-        
-        if (Array.isArray(currentNode))
-        {
-            
-            for ( i = 0; i< currentNode.length; i++ )
-            {
-            
-                elem = currentNode[i];
-
-                _filter(elem );            
-
-            }
-
-        } 
-        else 
-        { 
-            _filter( currentNode )
-        }
-        
-        function _filter( currentNode )
-        {       
-            var _j, currentChild;
-            
-            delete currentNode.x;
-            delete currentNode.y;
-            delete currentNode.px;
-            delete currentNode.py;
-            delete currentNode.weight;
-            delete currentNode.isLeaf;
-            delete currentNode.index;
-            delete currentNode.size;
-            delete currentNode.status;
-            
-            if (hasValue(currentNode))
-            {    
-                 
-                 if ( currentNode._children )
-                 {
-                    if ( currentNode.children )
-                    {
-                        
-                    }
-                    else
-                    {
-                        currentNode.children = [];
-                    }
-                    
-                    for( _j = 0;_j < currentNode._children.length; _j++ )
-                    {
-                        currentNode.children.push(  currentNode._children[_j] )
-                    }
-                    
-                    
-                 }
-                 
-                 delete currentNode._children;
-                 
-                if ( currentNode.children ) parseChilds( currentNode.children );
-                if ( currentNode._children ) parseChilds( currentNode._children );
-                
-                
-                
-                
-                function parseChilds( childs)
-                {
-
-                    for( _j = 0;_j < childs.length; _j++ )
-                    {
-                            currentChild = childs[_j];
-                            
- 
-                           _filter( currentChild );
-
-                    }  
-                }
-            }    
-
-        }
-        
-        return currentNode;
+                            for (_j = 0; _j < currentNode._children.length; _j++) {
+                                currentNode.children.push(currentNode._children[_j])
+                            }
 
 
-}
-
-
-function findNode(id, currentNode) {
-
-        var i,
-            currentChild,
-            result;
-
-        console.log( "find " + id );
-        console.log( currentNode )
-        
-        if (Array.isArray(currentNode))
-        {
-            for (var i = 0; i< currentNode.length; i++ )
-            {
-                elem =currentNode[i];
-                console.log( "recurring" );
-                res = findNode(id, elem);
-                if ( res !== false )
-                    return res;
-            }
-
-        } 
-        else 
-        { 
-      
-            if (id == currentNode.id) {
-                console.log( "Found" );
-                console.log ( currentNode );
-                
-                return currentNode;
-            }
-            else
-            {
-            
-                if (hasValue(currentNode))
-                {
-                    if (hasValue(currentNode.children)) 
-                    {
-
-                        for (var i = 0; i < currentNode.children.length; i += 1) 
-                        {
-
-                                currentChild = currentNode.children[i];
-
-                                // Search in the current child
-                                result = findNode(id, currentChild);
-
-                                // Return the result if the node has been found
-                                if (result !== false) {
-                                    return result;
-                                }
                         }
 
+                        delete currentNode._children;
+
+                        if (currentNode.children) parseChilds(currentNode.children);
+                        if (currentNode._children) parseChilds(currentNode._children);
+
+
+
+
+                        function parseChilds(childs) {
+
+                            for (_j = 0; _j < childs.length; _j++) {
+                                currentChild = childs[_j];
+
+
+                                _filter(currentChild);
+
+                            }
+                        }
                     }
 
                 }
 
+                return currentNode;
+
+
+            }
+
+
+            function findNode(id, currentNode) {
+
+                var i,
+                    currentChild,
+                    result;
+
+                console.log("find " + id);
+                console.log(currentNode)
+
+                if (Array.isArray(currentNode)) {
+                    for (var i = 0; i < currentNode.length; i++) {
+                        elem = currentNode[i];
+                        console.log("recurring");
+                        res = findNode(id, elem);
+                        if (res !== false)
+                            return res;
+                    }
+
+                } else {
+
+                    if (id == currentNode.id) {
+                        console.log("Found");
+                        console.log(currentNode);
+
+                        return currentNode;
+                    } else {
+
+                        if (hasValue(currentNode)) {
+                            if (hasValue(currentNode.children)) {
+
+                                for (var i = 0; i < currentNode.children.length; i += 1) {
+
+                                    currentChild = currentNode.children[i];
+
+                                    // Search in the current child
+                                    result = findNode(id, currentChild);
+
+                                    // Return the result if the node has been found
+                                    if (result !== false) {
+                                        return result;
+                                    }
+                                }
+
+                            }
+
+                        }
+
+
+                    }
+
+                }
+                return false;
+            }
+
+
+            // Returns a list of all nodes under the root.
+            function findRootNodes(root) {
+
+                var _rootNodes = [],
+                    i = 0;
+
+
+                if (Array.isArray(root)) {
+                    root.forEach(function(elem) {
+                        recurse(elem);
+                    });
+
+                } else {
+                    recurse(root);
+
+                }
+
+                function recurse(node) {
+
+
+                    if (node.children) {
+                        node.size = node.children.reduce(function(p, v) {
+                            return p + recurse(v);
+                        }, 0);
+
+                        _rootNodes.push(node);
+                    }
+
+
+                }
+
+
+                return _rootNodes;
+            }
+
+
+
+
+            // Returns a list of all nodes under the root.
+            function flatten(root) {
+
+                var nodes = []
+
+
+                if (Array.isArray(root)) {
+                    root.forEach(function(elem) {
+
+                        flat = flatten(elem);
+                        flat.forEach(function(e) {
+                            nodes.push(e);
+                        });
+
+
+                    });
+
+                } else {
+
+                    recurse(root);
+
+                }
+
+                function recurse(node) {
+
+                    node.isLeaf = true;
+
+
+                    if (node.children) {
+                        node.size = node.children.reduce(function(p, v) {
+                            //v.parent = node ;
+                            return p + recurse(v);
+                        }, 0);
+                        node.isLeaf = false;
+
+                    } else
+                    if (node._children) {
+                        //node.size = node._children.reduce(function(p, v) { return p + recurse(v); }, 0);
+                        node.isLeaf = false;
+                    }
+
+                    if (!node.id) node.id = ++lastNodeID;
+
+
+                    nodes.push(node);
+                }
+
+
+                return nodes;
+            }
+
+            // Toggle children on click.
+            function onclick(d) {
+
+
+                console.log(d);
+
+                if (d3.event.defaultPrevented) return;
+
+                var graph = d3.select(this)
+                var selection = d3.select(this).select("rect");
+
+
+                if (d.children) {
+
+                    if (hasValue(d)) {
+                        console.log("Collapsing " + d.id);
+                        var jNode = findJsonNode(d.id, flroot);
+
+                        console.log(jNode.id + " has CHILD collapsed, was " + jNode.status);
+                        jNode.status = "collapsed";
+
+                        jNode.isLeaf = false;
+
+
+                    }
+
+
+                    d._children = d.children;
+                    d.children = null;
+
+                } else {
+                    d.children = d._children;
+                    d._children = null;
+
+                    if (hasChilds(d)) {
+                        console.log("Expanding " + d.id);
+
+                        var jNode = findJsonNode(d.id, flroot);
+
+                        console.log(jNode.id + " has CHILD expanded, was " + jNode.status);
+
+                        jNode.status = "expanded";
+
+                        jNode.isLeaf = false;
+                    }
+
+
+                }
+                update(root);
+
+            }
+
+
+
+            function mouseover(e) {
+
+                if (enableEdit) {
+
+                    input = d3.select("#renamer")[0][0];
+
+                    if (input) return;
+
+
+                }
+
+                var selection = d3.select(this).select("rect");
+
+                var text = d3.select(this).select("text");
+
+                d3.select(this).moveToFront();
+
+                selection.classed("hover", true);
+                text.classed("hover", true);
+
+
+                var offsetX = parseFloat(selection.attr("x")) + parseFloat(selection.attr("width") / 2.0);
+                var offsetY = parseFloat(selection.attr("y")) + parseFloat(selection.attr("height") / 2.0);
+
+                selection.transition().duration(animInTime)
+                    .attr({
+                        transform: "translate(" + offsetX + "," + offsetY + ") " +
+                            "scale(" + zoom + ") " +
+                            "translate(-" + offsetX + ",-" + offsetY + ")"
+                    });
+
+                if (enableEdit) {
+
+                    div.on('contextmenu', null);
+                    selection.on('contextmenu', d3.contextMenu(menu));
+                }
+
+
+            }
+
+            function mouseout(e) {
+
+
+                var selection = d3.select(this).select("rect");
+                var text = d3.select(this).select("text");
+
+                selection.classed("hover", false);
+                text.classed("hover", false);
+
+                var offsetX = parseFloat(selection.attr("x")) + parseFloat(selection.attr("width") / 2.0);
+                var offsetY = parseFloat(selection.attr("y")) + parseFloat(selection.attr("height") / 2.0);
+
+                selection.transition().duration(animOutTime)
+                    .attr({
+                        transform: "translate(" + offsetX + "," + offsetY + ") " +
+                            "scale(" + (1) + ") " +
+                            "translate(-" + offsetX + ",-" + offsetY + ")"
+                    });
+
+
+                if (enableEdit) {
+
+                    div.on('contextmenu', d3.contextMenu(mainMenu));
+                    selection.on('contextmenu', null);
+                }
+
+            }
 
         }
-    
-    }
-    return false;
-}
-
-
-// Returns a list of all nodes under the root.
-function findRootNodes(root) {
-
-    var _rootNodes = [],
-        i = 0;
-
-
-    if (Array.isArray(root)) {
-        root.forEach(function(elem) {
-            recurse(elem);
-        });
-
-    } else {
-        recurse(root);
-
-    }
-
-    function recurse(node) {
-
-
-        if (node.children) {
-            node.size = node.children.reduce(function(p, v) {
-                return p + recurse(v);
-            }, 0);
-
-            _rootNodes.push(node);
-        }
-
-
-    }
-
-
-    return _rootNodes;
-}
-
-
-
-
-// Returns a list of all nodes under the root.
-function flatten(root) {
-
-    var nodes = []        
-
-
-    if (Array.isArray(root)) {
-        root.forEach(function(elem) {
-            
-            flat = flatten( elem );
-            flat.forEach( function(e)
-            {
-                    nodes.push( e ); 
-            } );
-            
-            
-        });
-
-    } else {
-    
-        recurse(root);
-
-    }
-
-    function recurse(node) {
-
-        node.isLeaf = true;
-        
-
-        if (node.children) {
-            node.size = node.children.reduce(function(p, v) {
-                //v.parent = node ;
-                return p + recurse(v);
-            }, 0);
-            node.isLeaf = false;
-
-        } else
-        if (node._children) {
-            //node.size = node._children.reduce(function(p, v) { return p + recurse(v); }, 0);
-            node.isLeaf = false;
-        }
-
-        if (!node.id) node.id = ++lastNodeID;
-        
-
-        nodes.push(node);
-    }
-
-
-    return nodes;
-}
-
-// Toggle children on click.
-function onclick(d) {
-
-
-    console.log(d);
-
-    if (d3.event.defaultPrevented) return;
-
-    var graph = d3.select(this)
-    var selection = d3.select(this).select("rect");
-
-
-    if (d.children) {
-
-        if (hasValue(d)) {
-            console.log("Collapsing " + d.id);
-            var jNode = findJsonNode(d.id, flroot);
-
-            console.log(jNode.id + " has CHILD collapsed, was " + jNode.status);
-            jNode.status = "collapsed";
-
-            jNode.isLeaf = false;
-
-
-        }
-
-
-        d._children = d.children;
-        d.children = null;
-
-    } else {
-        d.children = d._children;
-        d._children = null;
-
-        if (hasChilds(d)) {
-            console.log("Expanding " + d.id);
-
-            var jNode = findJsonNode(d.id, flroot);
-
-            console.log(jNode.id + " has CHILD expanded, was " + jNode.status);
-
-            jNode.status = "expanded";
-
-            jNode.isLeaf = false;
-        }
-
-
-    }
-    update(root);
-
-}
-
-
-
-function mouseover(e) {
-
-if ( enableEdit ){
-
-    input = d3.select( "#renamer" )[0][0];
-
-    if ( input )  return;
-
-    
-}
-
-    var selection = d3.select(this).select("rect");
-
-    var text = d3.select(this).select("text");
-
-    d3.select(this).moveToFront();
-
-    selection.classed("hover", true);
-    text.classed("hover", true);
-    
-    
-    var offsetX = parseFloat(selection.attr("x")) + parseFloat(selection.attr("width") / 2.0);
-    var offsetY = parseFloat(selection.attr("y")) + parseFloat(selection.attr("height") / 2.0);
-
-    selection.transition().duration(animInTime)
-        .attr({
-            transform: "translate(" + offsetX + "," + offsetY + ") " +
-                "scale(" + zoom + ") " +
-                "translate(-" + offsetX + ",-" + offsetY + ")"
-        });
-        
-        if ( enableEdit ){
-
-            div.on('contextmenu',null);
-            selection.on('contextmenu', d3.contextMenu(menu));
-        }
-
-
-}
-
-function mouseout(e) {
-
-
-    var selection = d3.select(this).select("rect");
-    var text = d3.select(this).select("text");
-
-    selection.classed("hover", false);
-    text.classed("hover", false);
-
-    var offsetX = parseFloat(selection.attr("x")) + parseFloat(selection.attr("width") / 2.0);
-    var offsetY = parseFloat(selection.attr("y")) + parseFloat(selection.attr("height") / 2.0);
-
-    selection.transition().duration(animOutTime)
-        .attr({
-            transform: "translate(" + offsetX + "," + offsetY + ") " +
-                "scale(" + (1) + ") " +
-                "translate(-" + offsetX + ",-" + offsetY + ")"
-        });
-        
-        
-        if ( enableEdit )
-        {
-        
-            div.on('contextmenu',d3.contextMenu(mainMenu));
-            selection.on('contextmenu', null );
-        }
-
-}
-
-}
-
-
-
-
-
-</script> 
+    </script>
 
 
 </body>
