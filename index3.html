@@ -220,11 +220,7 @@
 
 <body onload="makeD3( { 'editable': true } )">
 
-
-    <div id="container">
-
-
-    </div>
+    <div id="container"></div>
     <textarea id="result"></textarea>
 
     <script src="//d3js.org/d3.v3.min.js"></script>
@@ -263,13 +259,17 @@
 
                     d3.selectAll('.d3-context-menu').html('');
                     var list = d3.selectAll('.d3-context-menu').append('ul');
+                    
+                    var __x = d3.event.pageX;
+                    var __y = d3.event.pageY;
+                    
                     list.selectAll('li').data(menu).enter()
                         .append('li')
                         .html(function(d) {
                             return d.title;
                         })
                         .on('click', function(d, i) {
-                            d.action(elm, data, index);
+                            d.action(elm, data, index, __x, __y);
                             d3.select('.d3-context-menu').style('display', 'none');
                         });
 
@@ -335,85 +335,13 @@
 
 
 
-            var root = {
-                "name": "Flare\nMultiline",
-                "url": "http://google.com",
-                "children": [{
-                    "name": "analytics",
-                    "children": [{
-                            "name": "Sinister\ncluster",
-                            "url": "http://google.com",
-                            "children": [{
-                                    "name": "AgglomerativeCluster",
-                                    "url": "http://google.com"
-                                },
-                                {
-                                    "name": "CommunityStructure",
-                                    "url": "http://google.com"
-                                },
-                                {
-                                    "name": "Structure",
-                                    "url": "http://google.com"
-                                },
-                                {
-                                    "name": "Community",
-                                    "url": "http://google.com"
-                                },
-                                {
-                                    "name": "HierarchicalCluster",
-                                    "url": "http://google.com"
-                                },
-                                {
-                                    "name": "MergeEdge",
-                                    "url": "http://google.com"
-                                }
-                            ]
-                        },
-                        {
-                            "name": "Boh",
-                            "url": "http://google.com"
-                        },
-                        {
-                            "name": "graph",
-                            "url": "http://google.com",
-                            "children": [{
-                                    "name": "BetweennessCentrality",
-                                    "url": "http://google.com"
-                                },
-                                {
-                                    "name": "LinkDistance",
-                                    "url": "http://google.com"
-                                },
-                                {
-                                    "name": "MaxFlow\nMinCut",
-                                    "url": "http://google.com"
-                                },
-                                {
-                                    "name": "ShortestPaths",
-                                    "url": "http://google.com"
-                                },
-                                {
-                                    "name": "SpanningTree",
-                                    "url": "http://google.com"
-                                }
-                            ]
-                        },
-                        {
-                            "name": "optimization",
-                            "url": "http://google.com",
-                            "children": [{
-                                "name": "AspectRatioBanker",
-                                "url": "http://google.com"
-                            }]
-                        }
-                    ]
-                }]
-            }
-
+            var root =[];
+            
+           
 
             var mainMenu = [{
                     title: 'Add new node',
-                    action: function(elm, d, i) {
+                    action: function(elm, d, i, _x,_y) {
 
 
                         var newNode = JSON.clone(emptyNode);
@@ -453,7 +381,7 @@
 
             var menu = [{
                     title: 'Add sub node',
-                    action: function(elm, d, i) {
+                    action: function(elm, d, i, _x,_y) {
 
                         if (d) {
                             var nn = findNode(d.id, root);
@@ -471,8 +399,10 @@
                                 var newNode = JSON.clone(emptyNode);
                                 newNode.id = ++lastNodeID;
                                 newNode.name = "Node #" + lastNodeID;
-                                newNode.x = nn.x + 100;
-                                newNode.y = nn.y + 100;
+                                newNode.x = nn.x - 100 + Math.random(  ) * 100;
+                                newNode.y = nn.y - 100 + Math.random( ) * 100 ;
+                                
+
                                 child.push(newNode);
                                 nn.isLeaf = false;
                                 var tt = svg.select("#JIKU_MM_RECT_" + nn.id);
@@ -492,7 +422,7 @@
                 },
                 {
                     title: 'Edit node',
-                    action: function(elm, d, i) {
+                    action: function(elm, d, i, _x,_y) {
 
                         if (d) {
                             console.log(d)
@@ -504,8 +434,6 @@
 
 
                                 var txtElem = d3.select(tt);
-
-                                coords = getAbsoluteCoords(d.x, d.y);
 
                                 function submit() {
                                     var _title = title.node().value;
@@ -523,7 +451,7 @@
                                     update(root);
                                 }
 
-                                frm = d3.select("body").append("div").attr("id", "renamer").attr("style", "top:" + coords.y + "px; left:" + coords.x + "px;")
+                                frm = d3.select("body").append("div").attr("id", "renamer").attr("style", "top:" + _y + "px; left:" + _x + "px;")
 
                                 var removed = false;
 
@@ -552,7 +480,7 @@
                                         title[0][0].value = txt;
                                         return txt;
                                     })
-
+                                
                                 form.append("span").text("Contenuto")
 
                                 inp = form
@@ -566,6 +494,7 @@
                                     return textcontent;
                                 })
 
+                                
                                 buttContainer = form.append("div")
 
                                 buttContainer.classed("inner", true)
@@ -597,7 +526,7 @@
                                 px = _bound.left;
                                 py = _bound.top;
 
-                                console.log(d3.select(renamer))
+                                //console.log(d3.select(renamer))
 
                             }
                         }
@@ -658,27 +587,6 @@
             collapse(findRootNodes(root));
             update(root)
 
-
-            function getAbsoluteCoords(x, y) { // crossbrowser version
-
-
-                var body = document.body;
-                var docEl = document.documentElement;
-
-                var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
-                var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
-
-                var clientTop = docEl.clientTop || body.clientTop || 0;
-                var clientLeft = docEl.clientLeft || body.clientLeft || 0;
-
-                var top = y + scrollTop - clientTop;
-                var left = x + scrollLeft - clientLeft;
-
-                return {
-                    y: Math.round(top),
-                    x: Math.round(left)
-                };
-            }
 
             function resize(e) {
 
