@@ -341,8 +341,7 @@
 
 
 
-            var root =[{"name":"Node #1","url":"","id":1,"textcontent":"","children":[{"name":"Node #2","url":"","id":2,"textcontent":"","children":[{"name":"Node #4","url":"","id":4,"textcontent":"fdsfadsf","x":240.85360897252713,"y":375.3597533992098}],"x":164.85360897252713,"y":232.35973814042075},{"name":"Node #3","url":"","id":3,"textcontent":"","children":[{"name":"Node #5","url":"","id":5,"textcontent":"asASAssadasd","x":751.3017678964511,"y":214.62624073934182}],"x":718.3017678964511,"y":413.6262559981309},{"name":"Node #11","url":"","id":11,"x":470.1140033455813,"y":158.8794542112734,"textcontent":""}],"x":316.8536242313162,"y":241.35973814042075},{"name":"Node #6","url":"","id":6,"textcontent":"Cioa","children":[{"name":"Node #7","url":"","id":7,"textcontent":"","x":795.4257269109155,"y":64.20617864570866},{"name":"Node #14","url":"","id":14,"x":515.8815468662569,"y":29.867531950347,"textcontent":""}],"x":613.4257269109155,"y":168.2061748310114,"status":"collapsed"},{"name":"Node #12","url":"","id":12,"x":269,"y":147,"textcontent":"","children":[{"name":"Node #13","url":"","id":13,"x":415.6828363741249,"y":8.720548840834141,"textcontent":""}]}]
-            
+            var root =[{"name":"Node #1","url":"","id":1,"textcontent":"","children":[{"name":"Node #2","url":"","id":2,"textcontent":"","children":[{"name":"Node #4","url":"","id":4,"textcontent":"fdsfadsf","x":151.08219707677517,"y":295.45490720780356}],"x":235.8937510318533,"y":182.3733032038973,"status":"expanded"},{"name":"Node #3","url":"","id":3,"textcontent":"","children":[{"name":"Node #5","url":"","id":5,"textcontent":"asASAssadasd","x":667.9063401925937,"y":164.14340687703714}],"x":509.92515427950775,"y":348.37207508992776},{"name":"Node #11","url":"","id":11,"x":434.51669423303247,"y":77.91808946517966,"textcontent":""}],"x":426.04253948400174,"y":212.4002807429598,"status":"expanded"},{"name":"Node #6","url":"","id":6,"textcontent":"Cioa","children":[{"name":"Node #7","url":"","id":7,"textcontent":"","x":995.1550359929468,"y":64.34072301826725},{"name":"Node #14","url":"","id":14,"x":715.6108559482882,"y":30.002076322905594,"textcontent":""}],"x":825.229804059353,"y":238.10611532173405,"status":"expanded"},{"name":"Node #12","url":"","id":12,"x":244.3172607421875,"y":39.29343032836914,"textcontent":"","children":[{"name":"Node #13","url":"","id":13,"x":370.0000971163124,"y":-74.98602083079672,"textcontent":""}]}]
             
             
             var lastNodeID = countNodes( root ) + 1 ;
@@ -710,10 +709,14 @@
 
                 var drag = force.drag()
                 
+                
+                if (enableEdit) {
+                
                 drag
                 .on("drag", nodedrag )
                 .on("dragstart", dragstart);
-
+        
+                }
 
                 // Update links.
                 link = link.data(links, function(d) {
@@ -748,9 +751,11 @@
                     .on("mousedown", mousedown)
                     .on("mouseover", mouseover)
                     .on("mouseout", mouseout)
-                    .call(drag)
+                    
+                if (enableEdit) {                    
+                    nodeEnter.call(drag)
 
-
+                }
 
                 var a = nodeEnter.append("a")
                 
@@ -1566,8 +1571,12 @@
                     return;
                 }
                 
+                if (enableEdit) {
+                
                 div.on('contextmenu', d3.contextMenu(mainMenu));
             
+                }
+                
                 if ( d.textcontent )
                 {
                 
