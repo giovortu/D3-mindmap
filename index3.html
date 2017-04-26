@@ -228,7 +228,7 @@
     <script>
         function makeD3(options) {
 
-            var lastNodeID = 0;
+            
 
             if (typeof JSON.clone !== "function") {
                 JSON.clone = function(obj) {
@@ -237,129 +237,6 @@
             }
 
             var enableEdit = options && options.editable;
-            
-            d3.keybinding = function() {
-    // via https://github.com/keithamus/jwerty/
-    // and https://github.com/madrobby/keymaster
-    var _keys = {
-        // MOD aka toggleable keys
-        mods: {
-            // Shift key, ⇧
-            '⇧': 16,
-            // CTRL key, on Mac: ⌃
-            '⌃': 17,
-            // ALT key, on Mac: ⌥ (Alt)
-            '⌥': 18,
-            // META, on Mac: ⌘ (CMD), on Windows (Win), on Linux (Super)
-            '⌘': 91
-        },
-        // Normal keys
-        keys: {
-            // Backspace key, on Mac: ⌫ (Backspace)
-            '⌫': 8, backspace: 8,
-            // Tab Key, on Mac: ⇥ (Tab), on Windows ⇥⇥
-            '⇥': 9, '⇆': 9, tab: 9,
-            // Return key, ↩
-            '↩': 13, 'return': 13, enter: 13, '⌅': 13,
-            // Pause/Break key
-            'pause': 19, 'pause-break': 19,
-            // Caps Lock key, ⇪
-            '⇪': 20, caps: 20, 'caps-lock': 20,
-            // Escape key, on Mac: ⎋, on Windows: Esc
-            '⎋': 27, escape: 27, esc: 27,
-            // Space key
-            space: 32,
-            // Page-Up key, or pgup, on Mac: ↖
-            '↖': 33, pgup: 33, 'page-up': 33,
-            // Page-Down key, or pgdown, on Mac: ↘
-            '↘': 34, pgdown: 34, 'page-down': 34,
-            // END key, on Mac: ⇟
-            '⇟': 35, end: 35,
-            // HOME key, on Mac: ⇞
-            '⇞': 36, home: 36,
-            // Insert key, or ins
-            ins: 45, insert: 45,
-            // Delete key, on Mac: ⌦ (Delete)
-            '⌦': 46, del: 46, 'delete': 46,
-            // Left Arrow Key, or ←
-            '←': 37, left: 37, 'arrow-left': 37,
-            // Up Arrow Key, or ↑
-            '↑': 38, up: 38, 'arrow-up': 38,
-            // Right Arrow Key, or →
-            '→': 39, right: 39, 'arrow-right': 39,
-            // Up Arrow Key, or ↓
-            '↓': 40, down: 40, 'arrow-down': 40,
-            // odities, printing characters that come out wrong:
-            // Num-Multiply, or *
-            '*': 106, star: 106, asterisk: 106, multiply: 106,
-            // Num-Plus or +
-            '+': 107, 'plus': 107,
-            // Num-Subtract, or -
-            '-': 109, subtract: 109,
-            // Semicolon
-            ';': 186, semicolon:186,
-            // = or equals
-            '=': 187, 'equals': 187,
-            // Comma, or ,
-            ',': 188, comma: 188,
-            //'-': 189, //???
-            // Period, or ., or full-stop
-            '.': 190, period: 190, 'full-stop': 190,
-            // Slash, or /, or forward-slash
-            '/': 191, slash: 191, 'forward-slash': 191,
-            // Tick, or `, or back-quote
-            '`': 192, tick: 192, 'back-quote': 192,
-            // Open bracket, or [
-            '[': 219, 'open-bracket': 219,
-            // Back slash, or \
-            '\\': 220, 'back-slash': 220,
-            // Close backet, or ]
-            ']': 221, 'close-bracket': 221,
-            // Apostraphe, or Quote, or '
-            '\'': 222, quote: 222, apostraphe: 222
-        }
-    };
-    // To minimise code bloat, add all of the NUMPAD 0-9 keys in a loop
-    var i = 95, n = 0;
-    while (++i < 106) _keys.keys['num-' + n] = i; ++n;
-    // To minimise code bloat, add all of the top row 0-9 keys in a loop
-    i = 47, n = 0;
-    while (++i < 58) _keys.keys[n] = i; ++n;
-    // To minimise code bloat, add all of the F1-F25 keys in a loop
-    i = 111, n = 1;
-    while (++i < 136) _keys.keys['f' + n] = i; ++n;
-    // To minimise code bloat, add all of the letters of the alphabet in a loop
-    i = 64;
-    while(++i < 91) _keys.keys[String.fromCharCode(i).toLowerCase()] = i;
-
-    var pairs = d3.entries(_keys.keys),
-        event = d3.dispatch.apply(d3, d3.keys(_keys.keys));
-
-    function keys(selection) {
-        selection.on('keydown', function () {
-            var tagName = d3.select(d3.event.target).node().tagName;
-            if (tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA') {
-                return;
-            }
-
-            var modifiers = '';
-            if (d3.event.shiftKey) modifiers += '⇧';
-            if (d3.event.ctrlKey) modifiers += '⌃';
-            if (d3.event.altKey) modifiers += '⌥';
-            if (d3.event.metaKey) modifiers += '⌘';
-
-            pairs.filter(function(d) {
-                return d.value === d3.event.keyCode;
-            }).forEach(function(d) {
-                event[d.key](d3.event, modifiers);
-            });
-        });
-    }
-
-    return d3.rebind(keys, event, 'on');
-};
-
-
 
             d3.contextMenu = function(menu, openCallback) {
 
@@ -423,7 +300,6 @@
 
             var width = 960,
                 height = 500,
-                root = null,
                 rectWidth = 120,
                 rectHeight = 20,
                 radius = 15,
@@ -465,7 +341,12 @@
 
 
 
-            var root =[];
+            var root =[{"name":"Node #1","url":"","id":1,"textcontent":"","children":[{"name":"Node #2","url":"","id":2,"textcontent":"","children":[{"name":"Node #4","url":"","id":4,"textcontent":"fdsfadsf","x":240.85360897252713,"y":375.3597533992098}],"x":164.85360897252713,"y":232.35973814042075},{"name":"Node #3","url":"","id":3,"textcontent":"","children":[{"name":"Node #5","url":"","id":5,"textcontent":"asASAssadasd","x":751.3017678964511,"y":214.62624073934182}],"x":718.3017678964511,"y":413.6262559981309},{"name":"Node #11","url":"","id":11,"x":470.1140033455813,"y":158.8794542112734,"textcontent":""}],"x":316.8536242313162,"y":241.35973814042075},{"name":"Node #6","url":"","id":6,"textcontent":"Cioa","children":[{"name":"Node #7","url":"","id":7,"textcontent":"","x":795.4257269109155,"y":64.20617864570866},{"name":"Node #14","url":"","id":14,"x":515.8815468662569,"y":29.867531950347,"textcontent":""}],"x":613.4257269109155,"y":168.2061748310114,"status":"collapsed"},{"name":"Node #12","url":"","id":12,"x":269,"y":147,"textcontent":"","children":[{"name":"Node #13","url":"","id":13,"x":415.6828363741249,"y":8.720548840834141,"textcontent":""}]}]
+            
+            
+            
+            var lastNodeID = countNodes( root ) + 1 ;
+           
             
             function edit(elm, d, i, _x,_y) {
 
@@ -616,19 +497,20 @@
 
                     }
                 }
-                /*,
-                        {
-                            title: 'Expand all',
-                            action: function(elm, d, i) {
-                            }
-                            
-                        },
-                        {
-                            title: 'Collapse all',
-                            action: function(elm, d, i) {
-                            }
-                            
-                        }*/
+                ,
+                {
+                    title: 'Expand all',
+                    action: function(elm, d, i) {
+                        expand( findRootNodes(root)  )
+                    }
+                    
+                },
+                {
+                    title: 'Collapse all',
+                    action: function(elm, d, i) {
+                    }
+                    
+                }
             ]
 
             var input;
@@ -709,6 +591,8 @@
 
                 .size([width, height])
                 .on("tick", tick)
+                
+
 
 
 
@@ -785,8 +669,8 @@
             var rootNodes = findRootNodes(root);
 
 
-            update(root)
-            collapse(findRootNodes(root));
+            //update(root)
+            //collapse(findRootNodes(root));
             update(root)
            
 
@@ -806,7 +690,7 @@
                 rootNodes = findRootNodes(root);
 
                 if (enableEdit) {
-                    console.log(filterAll(root));
+                   // console.log(filterAll(root));
                     document.getElementById("result").value = JSON.stringify(filterAll(root));
                 }
                 //console.log( root );
@@ -916,9 +800,11 @@
                     })
                     .call(wrap);
 
-                           
+                         
+                var circles = nodeEnter.append("g")
+                    .attr("class", "textcontentcircle")                
              
-                var circle = nodeEnter.append("circle")
+                var circle = circles.append("circle")
                     .style("fill","#50e050")
                     .style("stroke","#505020")
                     .attr("cx",0)
@@ -927,15 +813,25 @@
                     .attr("id", function(d) {
                         return "JIKU_MM_CIRCLE_" + d.id;
                     })
-                    .on("mouseover", clickContent)
+                    .on("mouseover", onContent)
                     .on("mouseout", outContent)
-                    .attr("visibility", function(d,i){
+
+                
+                /*circles.append("svg:path")
+                    .attr("d", d3.svg.symbol().type( "cross" ));
+                */    
                     
-                        if(d.textcontent) 
-                            return "visible";
-                        return "hidden";
-                    
-                })
+                var sym = circles.append("text")
+                    .style("text-anchor", "middle")
+                    .style("font-size", "15px")
+                    .style("font-style", "italic")
+                    .attr("y",-2)
+                    .attr("y",5)
+                    .attr("width",12)
+                    .attr("height",12)
+                    .text("i")
+
+                
                 
                
 
@@ -971,9 +867,20 @@
                     _rect.setAttribute("width", w)
                     _rect.setAttribute("height", h)
                     
-                    var _circles = childs[1];                    
-                    _circles.cx.baseVal.value =  w/2;
-                    _circles.cy.baseVal.value =  h/2;
+                    
+                    
+                    var _circles = d3.selectAll('g.textcontentcircle');
+                    
+                    _circles.attr("transform", "translate(" + "0" + "," + h/2 + ")")
+                    .attr("visibility", function(d,i){
+                    
+                        if(d.textcontent) 
+                            return "visible";
+                        return "hidden";
+                    
+                })
+
+  
 
 
                 });
@@ -1024,6 +931,48 @@
                 ret = hasValue(d.children) || hasValue(d._children);
 
                 return ret;
+
+            }
+            
+            
+            function expand(nodes) {           
+            
+            
+                nodes.forEach(function(d) {
+
+                    if (d._children) {
+                    
+                        d.children = d._children;
+                        d._children = null;
+
+                        if (hasChilds(d)) {
+                        
+                        console.log(d);
+                        
+                            d.children.forEach( function( elem )
+                            {
+                                expand( elem );
+                            });
+                            
+                            console.log("Expanding " + d.id);
+
+                            var jNode = findJsonNode(d.id, flroot);
+
+                            console.log(jNode.id + " has CHILD expanded, was " + jNode.status);
+
+                            jNode.status = "expanded";
+
+                        }
+
+
+                    }
+
+
+                });
+                
+                update( root );
+
+
 
             }
 
@@ -1169,7 +1118,7 @@
 
                 var currentNode = JSON.clone(_currentNode);
 
-                console.log("Filtering ");
+                //console.log("Filtering ");
 
                 if (Array.isArray(currentNode)) {
 
@@ -1188,15 +1137,14 @@
                 function _filter(currentNode) {
                     var _j, currentChild;
 
-                    delete currentNode.x;
-                    delete currentNode.y;
+                    delete currentNode.fixed;
                     delete currentNode.px;
                     delete currentNode.py;
                     delete currentNode.weight;
                     delete currentNode.isLeaf;
                     delete currentNode.index;
                     delete currentNode.size;
-                    delete currentNode.status;
+                    //delete currentNode.status;
 
                     if (hasValue(currentNode)) {
 
@@ -1248,13 +1196,13 @@
                     currentChild,
                     result;
 
-                console.log("find " + id);
-                console.log(currentNode)
+               // console.log("find " + id);
+              //  console.log(currentNode)
 
                 if (Array.isArray(currentNode)) {
                     for (var i = 0; i < currentNode.length; i++) {
                         elem = currentNode[i];
-                        console.log("recurring");
+                       // console.log("recurring");
                         res = findNode(id, elem);
                         if (res !== false)
                             return res;
@@ -1263,8 +1211,8 @@
                 } else {
 
                     if (id == currentNode.id) {
-                        console.log("Found");
-                        console.log(currentNode);
+                       // console.log("Found");
+                       // console.log(currentNode);
 
                         return currentNode;
                     } else {
@@ -1296,6 +1244,53 @@
                 return false;
             }
 
+            
+            function countNodes( root )
+            {
+                if (Array.isArray(root)) {
+                
+                        var sum2 = 0;
+                        
+                        root.forEach(function(elem) 
+                        {
+                            sum2+=recurse(elem);
+                            //console.log("sum2",sum2, recurse(elem))
+                        });
+                        
+                        return sum2;
+
+                } else {
+                
+                    return recurse(root);
+
+                }
+                
+                function recurse(node) {
+                    
+                    var sum = 0;
+
+                    if (node.children) {
+                    
+                        sum+= node.children.length + 1;
+                        
+                        node.children.forEach(function(elem) {
+            
+                                if (elem.children) {    
+                                    sum += recurse(elem)
+                                }
+                            
+                        });
+
+                        
+                    }
+                    
+                    return sum;
+
+
+                }
+            
+            
+            }
 
             // Returns a list of all nodes under the root.
             function findRootNodes(root) {
@@ -1361,7 +1356,7 @@
                 function recurse(node) {
 
                     node.isLeaf = true;
-
+                    node.fixed = true;
 
                     if (node.children) {
                         node.size = node.children.reduce(function(p, v) {
@@ -1391,10 +1386,6 @@
 
 
                 if (d3.event.defaultPrevented) return;
-
-                var graph = d3.select(this)
-                var selection = d3.select(this).select("rect");
-
 
                 if (d.children) {
 
@@ -1448,16 +1439,18 @@
             var shiftClicked = false;
             var ctrlClicked = false;
             
-            function nodedrag(dd) {
+            function nodedrag(dd) {        
             
-            if ( !ctrlClicked ) return;
              
             
                 var selection = d3.selectAll("#JIKU_MM_NODE_" + dd.id);
                 
+                var nn = findNode(dd.id, root);
                 
+                nn.x = dd.px +d3.event.dx
+                nn.y = dd.py +d3.event.dy
                 
-                if ( dd.children )
+                if ( ctrlClicked  && dd.children )
                 {
                     dd.children.forEach( function( elem ){
                     
@@ -1479,7 +1472,7 @@
                     
                 }
 
-            
+                update(root);
             
             }
             
@@ -1556,7 +1549,7 @@
             }
             
             
-            function clickContent(d){
+            function onContent(d){
             
                 d3.event.preventDefault();
             
@@ -1582,7 +1575,13 @@
                     
                     div.attr("id", "details").attr("style", "top:" + d3.event.pageY + "px; left:" + d3.event.pageX + "px;")
                     
-                    div.append("span").text( d.textcontent );
+                    str = d.textcontent.split(/(?:\r\n|\r|\n)/g );
+                    
+                    str.forEach( function( elem ){
+                    
+                    div.append("span").text( elem );
+                    div.append("br")
+                    });
                     
                     
                 }
