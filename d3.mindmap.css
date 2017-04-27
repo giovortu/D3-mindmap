@@ -1,4 +1,5 @@
-    .link {
+   
+   .link {
 
         fill: none;
         stroke: #666;
@@ -202,6 +203,7 @@
 
     .d3-mindmap-svg {
         border: 1px solid #ff4d4a;
+        background-color:#eaeaea;
     }
 
 
@@ -230,3 +232,10 @@
         color: #ffffff;
         outline: none;
     } 
+    
+    
+    .grid  {
+        stroke-opacity:0.4;
+        stroke-width: 1px;
+        stroke:black;
+    }

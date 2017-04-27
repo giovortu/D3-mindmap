@@ -297,13 +297,18 @@
                 {
                     title: 'Expand all',
                     action: function(elm, d, i) {
-                        expand( findRootNodes(root)  )
+
+                        expand( root  )
+                        update( root )
                     }
                     
                 },
                 {
                     title: 'Collapse all',
                     action: function(elm, d, i) {
+                        
+                        collapse( root )
+                        update( root )
                     }
                     
                 }
@@ -374,6 +379,28 @@
                     }
                 }
             ]
+            
+            var viewMenu =
+            [
+                {
+                    title: 'Expand all',
+                    action: function(elm, d, i) {
+
+                        expand( root  )
+                        update( root )
+                    }
+                    
+                },
+                {
+                    title: 'Collapse all',
+                    action: function(elm, d, i) {
+                        
+                        collapse( root )
+                        update( root )
+                    }
+                    
+                }
+            ]
 
 
 
@@ -404,26 +431,42 @@
             
             var helpControls = div.append( "div" ).attr("id", "d3-mindmap-help-controls" );
             
-            var helpButton = helpControls.append("button").text("Help").classed("d3-mindmap-little-button",true);
-           
+            var helpButton = null;
             
-            
-            var zoomPlus = zoomControls.append("button").text("Zoom +").classed("d3-mindmap-little-button",true).attr("id","zoom_in");
-            
-            var zoomReset = zoomControls.append("button").text("Reset").classed("d3-mindmap-little-button",true).attr("id","zoom_reset");
-            
-            var zoomMinus = zoomControls.append("button").text("Zoom -").classed("d3-mindmap-little-button",true).attr("id","zoom_out");
-            
-            
-            zoomPlus.on("click", zoomClick)
-            
-            zoomReset.on("click", zoomClick)
-
-            zoomMinus.on("click", zoomClick)            
-
-
             if (enableEdit) {
+            
+                helpButton = helpControls.append("button")
+                            .text("Help")
+                            .classed("d3-mindmap-little-button",true);
+           
+            }
+            
+            var zoomPlus = zoomControls.append("button")
+                            .text("Zoom +")
+                            .classed("d3-mindmap-little-button",true)
+                            .attr("id","zoom_in")
+                            .on("click", zoomClick)  
+            
+            var zoomReset = zoomControls.append("button")
+                            .text("Reset")
+                            .classed("d3-mindmap-little-button",true)
+                            .attr("id","zoom_reset")
+                            .on("click", zoomClick)  
+            
+            var zoomMinus = zoomControls.append("button")
+                            .text("Zoom -")
+                            .classed("d3-mindmap-little-button",true)
+                            .attr("id","zoom_out")
+                            .on("click", zoomClick)  
+            
+
+            if (enableEdit) 
+            {
                 div.on('contextmenu', d3.contextMenu(mainMenu));
+            }
+            else
+            {
+                div.on('contextmenu', d3.contextMenu(viewMenu));   
             }
             
             
@@ -439,19 +482,22 @@
                 zoom.translate( nodesData.viewport.translate );  
   
             zoom.on("zoom", translateandrescale);
-
+            
+    
+                
             var outer = div.append("svg")
                 .classed("d3-mindmap-svg",true)
                 .attr("width", width)
                 .attr("height", height)
-                .attr("pointer-events", "all");
-                
+                .attr("pointer-events", "all")
+               
                 
  
             var svg = outer
                 .call(zoom)
                 .append('svg:g')
-                     
+                
+          
 
                 /*link arrow*/
             outer.append("svg:defs").selectAll("marker")
@@ -551,7 +597,8 @@
                 
                 drag
                 .on("drag", nodedrag )
-                .on("dragstart", dragstart);
+                .on("dragstart", dragstart)
+                .on("dragend", dragend);
         
                 }
 
@@ -656,16 +703,12 @@
                     .on("mouseover", onContent)
                     .on("mouseout", outContent)
 
-                
-                /*circles.append("svg:path")
-                    .attr("d", d3.svg.symbol().type( "cross" ));
-                */    
                     
                 var sym = circles.append("text")
                     .style("text-anchor", "middle")
                     .style("font-size", "15px")
                     .style("font-style", "italic")
-                    .attr("y",-2)
+                    .attr("x",-1)
                     .attr("y",5)
                     .attr("width",12)
                     .attr("height",12)
@@ -677,8 +720,13 @@
 
                 var gs = d3.selectAll('g.node');
 
-                if (enableEdit) {
+                if (enableEdit) 
+                {
                     a.on('contextmenu', d3.contextMenu(menu));
+                }
+                else
+                {
+                    a.on('contextmenu', d3.contextMenu(viewMenu));
                 }
 
                 gs[0].forEach(function(elem) {
@@ -740,7 +788,7 @@
             
             function linkArc(d) {          
             
-               perc = 0.6;
+               perc = 0.65;
             
                targetX = (d.source.x + perc * ( d.target.x- d.source.x ) )
                targetY = (d.source.y + perc * ( d.target.y- d.source.y ) )
@@ -788,42 +836,43 @@
             }
             
             /* expand nodes */
-            function expand(nodes) {           
-            
-            
+            function expand(nodes) {
+                
+                if (Array.isArray(nodes)) {
+
                 nodes.forEach(function(d) {
-
-                    if (d._children) {
                     
-                        d.children = d._children;
-                        d._children = null;
-
-                        if (hasChilds(d)) {
-                        
-                                               
-                            d.children.forEach( function( elem )
-                            {
-                                expand( elem );
-                            });
-                            
-                            //console.log("Expanding " + d.id);
-
-                            var jNode = findJsonNode(d.id, flroot);
-
-                            //console.log(jNode.id + " has CHILD expanded, was " + jNode.status);
-
-                            jNode.status = "expanded";
-
-                        }
-
-
-                    }
-
-
+                    expand( d );
+                    
                 });
                 
-                update( root );
+                }
+                else
+                {
+                        
+                    
 
+                    if (nodes._children) {
+
+                        if ( nodes.children )
+                        {
+                            nodes.children.forEach( function( e )
+                            {
+                                expand( e );
+                            });   
+                        }
+                        nodes.children = nodes._children;
+                        nodes._children = null;
+                        
+                        nodes.children.forEach( function( e )
+                        {
+                            expand( e );
+                        });
+
+                    } 
+
+                    
+                }
 
 
             }
@@ -831,49 +880,43 @@
 
             /* collapse nodes */
             function collapse(nodes) {
+                
+                if (Array.isArray(nodes)) {
 
                 nodes.forEach(function(d) {
-
-                    if (d.children) {
-
-                        if (hasValue(d)) {
-                            console.log("Collapsing " + d.id);
-                            var jNode = findJsonNode(d.id, flroot);
-
-                            console.log(jNode.id + " has CHILD collapsed, was " + jNode.status);
-                            jNode.status = "collapsed";
-
-                            //jNode.isLeaf = false;
-
-
-                        }
-
-
-                        d._children = d.children;
-                        d.children = null;
-
-                    } else {
-                        d.children = d._children;
-                        d._children = null;
-
-                        if (hasChilds(d)) {
-                            console.log("Expanding " + d.id);
-
-                            var jNode = findJsonNode(d.id, flroot);
-
-                            console.log(jNode.id + " has CHILD expanded, was " + jNode.status);
-
-                            jNode.status = "expanded";
-
-                            //jNode.isLeaf = false;
-                        }
-
-
-                    }
-
-
+                    
+                    collapse( d );
+                    
                 });
+                
+                }
+                else
+                {
+                        
+                    
 
+                    if (nodes.children) {
+                        
+                        if ( nodes._children )
+                        {
+                            nodes._children.forEach( function( e )
+                            {
+                                collapse( e );
+                            });   
+                        }
+
+                        nodes._children = nodes.children;
+                        nodes.children = null;
+                        
+                        nodes._children.forEach( function( e )
+                        {
+                            collapse( e );
+                        });
+
+                    } 
+
+                    
+                }
 
 
             }
@@ -1246,8 +1289,6 @@
                         console.log("Collapsing " + d.id);
                         var jNode = findJsonNode(d.id, flroot);
 
-                        jNode.status = "collapsed";
-
                         jNode.isLeaf = false;
 
 
@@ -1265,8 +1306,6 @@
 
                         var jNode = findJsonNode(d.id, flroot);
 
-                        jNode.status = "expanded";
-
                         jNode.isLeaf = false;
                     }
 
@@ -1277,11 +1316,15 @@
             }
             
 
-            function dragstart(d) {            
+            function dragstart(d) {   
+                
                 d3.event.sourceEvent.stopPropagation();
             }
             
-
+            function dragend(d) {            
+                d3.event.sourceEvent.stopPropagation();
+            }
+            
             
             
             /* node movement */
@@ -1334,7 +1377,7 @@
                     if (input) return;
                 }
                 
-                zoom.on("zoom", function(){});
+                zoom.on("zoom", function(){ });
 
                 outer.call(zoom.event)
 
@@ -1350,12 +1393,15 @@
                 selection.classed("hover", true);
                 text.classed("hover", true);
 
-
+                div.on('contextmenu',  null );
                     
-                if (enableEdit) {
-
-                    div.on('contextmenu', null);
+                if (enableEdit)
+                { 
                     selection.on('contextmenu', d3.contextMenu(menu));
+                }
+                else
+                {
+                    selection.on('contextmenu', d3.contextMenu(viewMenu) );
                 }
 
 
@@ -1377,11 +1423,16 @@
 
                 selection.classed("hover", false);
                 text.classed("hover", false);
+                
+                selection.on('contextmenu', null );
 
-                if (enableEdit) {
-
+                if (enableEdit)
+                {
                     div.on('contextmenu', d3.contextMenu(mainMenu));
-                    selection.on('contextmenu', null);
+                }
+                else
+                {
+                    div.on('contextmenu', d3.contextMenu(viewMenu));
                 }
 
             }
@@ -1471,7 +1522,10 @@
 
                 d3.event.preventDefault();
                 direction = (this.id === 'zoom_in') ? 1 : ( (this.id === 'zoom_out')? -1:0 );
-                target_zoom = zoom.scale() * (1 + factor * direction);
+                if ( direction == 0 )
+                    target_zoom = 1;
+                else
+                    target_zoom = zoom.scale() * (1 + factor * direction);
 
                 if (target_zoom < extent[0] || target_zoom > extent[1]) { return false; }
 
