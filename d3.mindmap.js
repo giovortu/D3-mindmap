@@ -112,6 +112,7 @@
                 resultsID       = ( options && options.results ) || "result"
                 fixedNodes      = ( options && options.fixedNodes ) 
                 
+                
 
             /*text element text wrapping*/
             function wrap(text, width) {
@@ -142,13 +143,17 @@
            
             var root = nodesData.nodes;
                         
-            var lastNodeID = countNodes( root ) + 1 ;
+            var lastNodeID = countNodes( root )  ;
+            
+            console.log ( lastNodeID )
+            
+            
            
             
             function edit(elm, d, i, _x,_y) {
 
                         if (d) {
-                            console.log(d)
+
                             var nn = findNode(d.id, root);
                             var tt = svg.select("#JIKU_MM_TEXT_" + nn.id)[0][0];
                              
@@ -312,9 +317,7 @@
 
                         if (d) {
                             var nn = findNode(d.id, root);
-                            console.log(d.id);
-                            console.log("-----------");
-                            console.log(nn);
+
                             if (nn.isLeaf) {
                                 nn.children = [];
                                 nn._children = null;
@@ -387,43 +390,45 @@
                 .size([width, height])
                 .on("tick", tick)
                 
+                
 
 
 
 
             var div = d3.selectAll("div#" + containerID)
+            
+            div.style("position","relative").style("width", width +"px").style("height", height+"px");
+            
+            
+            var zoomControls = div.append( "div" ).attr("id", "d3-mindmap-zoom-controls" );
+            
+            var helpControls = div.append( "div" ).attr("id", "d3-mindmap-help-controls" );
+            
+            var helpButton = helpControls.append("button").text("Help").classed("d3-mindmap-little-button",true);
+           
+            
+            
+            var zoomPlus = zoomControls.append("button").text("Zoom +").classed("d3-mindmap-little-button",true).attr("id","zoom_in");
+            
+            var zoomReset = zoomControls.append("button").text("Reset").classed("d3-mindmap-little-button",true).attr("id","zoom_reset");
+            
+            var zoomMinus = zoomControls.append("button").text("Zoom -").classed("d3-mindmap-little-button",true).attr("id","zoom_out");
+            
+            
+            zoomPlus.on("click", zoomClick)
+            
+            zoomReset.on("click", zoomClick)
 
-            div.style("width", width).style("height", height);
+            zoomMinus.on("click", zoomClick)            
+
 
             if (enableEdit) {
                 div.on('contextmenu', d3.contextMenu(mainMenu));
             }
             
-           
-            
-            function translateandrescale( ndata ) {
-            
-                
-                scale=( ndata && ndata.scale ) || ( d3.event && d3.event.scale );
-                trans=( ndata && ndata.translate ) || ( d3.event && d3.event.translate );
-                
-                if ( scale && trans )
-                {
-                    
-                    nodesData.viewport = { "scale" : scale, "translate" : trans }
-                    
-                    tr2 = [ trans[0] /scale    , trans[1]/scale  ]
-
-                    svg.attr("transform", "scale(" + scale + ")" + "translate(" + tr2 + ")" );
-                    
-                    updateResult();
-                }
-               
-            }
-            
             
             var zoom = d3.behavior.zoom()
-                
+                .scaleExtent([0.2, 2.5])
                 .center([width / 2, height / 2])
                 .size([width, height])
                 
@@ -448,6 +453,7 @@
                 .append('svg:g')
                      
 
+                /*link arrow*/
             outer.append("svg:defs").selectAll("marker")
                     .data(["end"])      // Different link/path types can be defined here
                     .enter().append("svg:marker")    // This section adds in the arrows
@@ -483,6 +489,31 @@
            
 
             var flroot;
+            
+            /* pan and zoom */
+            function translateandrescale( ndata ) {
+            
+                
+                scale=( ndata && ndata.scale ) || ( d3.event && d3.event.scale );
+                trans=( ndata && ndata.translate ) || ( d3.event && d3.event.translate );
+
+                
+                if ( scale && trans )
+                {
+                    
+                    
+                    
+                    tr1 = [ trans[0] *scale    , trans[1]*scale  ]
+                    tr2 = [ trans[0] /scale    , trans[1]/scale  ]
+
+                    svg.attr("transform", "scale(" + scale + ")" + "translate(" + tr2 + ")" );
+                    
+                    nodesData.viewport = { "scale" : scale, "translate" : tr1 }
+                    
+                    updateResult();
+                }
+               
+            }
 
 
 
@@ -506,8 +537,8 @@
                     .nodes(nodes)
                     .links(links)
                     .linkDistance(fontSize * 10)
-                    .charge(-800)
-                    .gravity(.07)
+                    .charge(-8000)
+                    .gravity(.05)
                     .friction(0.1)
                     .size([width, height])                    
                     .start()
@@ -671,7 +702,7 @@
                     _rect.setAttribute("x", -w / 2);
                     _rect.setAttribute("y", -h / 2);
 
-                    _text.setAttribute("y", -h / 2 + fontSize / 1.5);
+                    _text.setAttribute("y", textYMargin/2 -h / 2 + fontSize / 2.5);
 
                     _rect.setAttribute("width", w)
                     _rect.setAttribute("height", h)
@@ -698,6 +729,7 @@
             }
 
             function updateResult() {
+                
 
                 if (enableEdit && document.getElementById( resultsID )) {
                     // console.log(filterAll(root));
@@ -721,6 +753,7 @@
 
             function tick() {
             
+   
                 link.attr("d", linkArc);
             
 
@@ -729,8 +762,12 @@
                     return "translate(" +d.x + "," + d.y + ")";
                     
                 });
+                
+                if (fixedNodes )
+                    force.stop();
 
-                 update(root);
+                updateResult()
+
 
             }
 
@@ -763,18 +800,17 @@
 
                         if (hasChilds(d)) {
                         
-                        console.log(d);
-                        
+                                               
                             d.children.forEach( function( elem )
                             {
                                 expand( elem );
                             });
                             
-                            console.log("Expanding " + d.id);
+                            //console.log("Expanding " + d.id);
 
                             var jNode = findJsonNode(d.id, flroot);
 
-                            console.log(jNode.id + " has CHILD expanded, was " + jNode.status);
+                            //console.log(jNode.id + " has CHILD expanded, was " + jNode.status);
 
                             jNode.status = "expanded";
 
@@ -934,23 +970,26 @@
 
                 var i,
                     elem;
+                    
+                    __currentNode = JSON.clone( _currentNode );
+                    
+                    __currentNode.viewport.translate[0] = Math.floor(__currentNode.viewport.translate[0])
+                    __currentNode.viewport.translate[1] = Math.floor(__currentNode.viewport.translate[1])
+                    
+                    _nodes = __currentNode.nodes;
 
-                var currentNode = JSON.clone(_currentNode);
+                if (Array.isArray(_nodes)) {
 
-                //console.log("Filtering ");
+                    for (i = 0; i < _nodes.length; i++) {
 
-                if (Array.isArray(currentNode)) {
-
-                    for (i = 0; i < currentNode.length; i++) {
-
-                        elem = currentNode[i];
+                        elem = _nodes[i];
 
                         _filter(elem);
 
                     }
 
                 } else {
-                    _filter(currentNode)
+                    _filter(_nodes)
                 }
 
                 function _filter(currentNode) {
@@ -963,7 +1002,12 @@
                     delete currentNode.isLeaf;
                     delete currentNode.index;
                     delete currentNode.size;
+                    delete currentNode.status;
 
+                    currentNode.x =  Math.floor(currentNode.x)
+                    currentNode.y =  Math.floor(currentNode.y)
+                    
+                    
 
                     if (hasValue(currentNode)) {
 
@@ -984,9 +1028,7 @@
                         delete currentNode._children;
 
                         if (currentNode.children) parseChilds(currentNode.children);
-                        if (currentNode._children) parseChilds(currentNode._children);
-
-
+                        //if (currentNode._children) parseChilds(currentNode._children);
 
 
                         function parseChilds(childs) {
@@ -1002,8 +1044,10 @@
                     }
 
                 }
+                
+                __currentNode.nodes = _nodes;
 
-                return currentNode;
+                return __currentNode;
 
 
             }
@@ -1067,7 +1111,8 @@
                             sum2+=recurse(elem);
                         });
                         
-                        return sum2;
+                        
+                        return sum2 + root.length;
 
                 } else {
                 
@@ -1081,7 +1126,7 @@
 
                     if (node.children) {
                     
-                        sum+= node.children.length + 1;
+                        sum+= node.children.length ;
                         
                         node.children.forEach(function(elem) {
             
@@ -1351,7 +1396,7 @@
                 div = d3.selectAll("div#container")
             
            
-                rem = d3.selectAll("div#details");
+                rem = d3.selectAll("div#d3-mindmap-details");
                 
                   
                 if ( !rem.empty() )
@@ -1371,7 +1416,7 @@
                 
                     div = d3.select("body").append("div")
                     
-                    div.attr("id", "details").attr("style", "top:" + d3.event.pageY + "px; left:" + d3.event.pageX + "px;")
+                    div.attr("id", "d3-mindmap-details").attr("style", "top:" + d3.event.pageY + "px; left:" + d3.event.pageX + "px;")
                     
                     str = d.textcontent.split(/(?:\r\n|\r|\n)/g );
                     
@@ -1388,10 +1433,58 @@
             /* content display management */
             function outContent(d){
             
-                d3.selectAll("div#details").remove();
+                d3.selectAll("div#d3-mindmap-details").remove();
      
             
             }
+            
+                        function interpolateZoom (translate, scale) {
+                var self = this;
+                return d3.transition().duration(350).tween("zoom", function () {
+                    var iTranslate = d3.interpolate(zoom.translate(), translate),
+                        iScale = d3.interpolate(zoom.scale(), scale);
+                    return function (t) {
+                        zoom
+                            .scale(iScale(t))
+                            .translate(iTranslate(t));
+                            
+                        nodesData.viewport.scale = iScale(t)
+                        nodesData.viewport.translate = iTranslate(t)
+                        
+                        translateandrescale( nodesData.viewport )
+                    };
+                });
+            }
+                
+
+            function zoomClick() {
+                var clicked = d3.event.target,
+                    direction = 1,
+                    factor = 0.2,
+                    target_zoom = 1,
+                    center = [width / 2, height / 2],
+                    extent = zoom.scaleExtent(),
+                    translate = zoom.translate(),
+                    translate0 = [],
+                    l = [],
+                    view = {x: translate[0], y: translate[1], k: zoom.scale()};
+
+                d3.event.preventDefault();
+                direction = (this.id === 'zoom_in') ? 1 : ( (this.id === 'zoom_out')? -1:0 );
+                target_zoom = zoom.scale() * (1 + factor * direction);
+
+                if (target_zoom < extent[0] || target_zoom > extent[1]) { return false; }
+
+                translate0 = [(center[0] - view.x) / view.k, (center[1] - view.y) / view.k];
+                view.k = target_zoom;
+                l = [translate0[0] * view.k + view.x, translate0[1] * view.k + view.y];
+
+                view.x += center[0] - l[0];
+                view.y += center[1] - l[1];
+
+                interpolateZoom([view.x, view.y], view.k);
+            }
+            
 
         }
  

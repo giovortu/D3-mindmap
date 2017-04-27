@@ -1,38 +1,81 @@
 {
- "name": "flare",
- "children": [
-  {
-   "name": "analytics",
-   "children": [
-    {
-     "name": "cluster",
-     "children": [
-      {"name": "AgglomerativeCluster","url":"http://google.com", "size": 3938},
-      {"name": "CommunityStructure", "size": 3812},
-      {"name": "HierarchicalCluster", "size": 6714},
-      {"name": "MergeEdge", "size": 743}
-     ]
-    },
-    {
-     "name": "graph",
-     "children": [
-      {"name": "BetweennessCentrality", "size": 3534},
-      {"name": "LinkDistance", "size": 5731},
-      {"name": "MaxFlowMinCut", "size": 7840},
-      {"name": "ShortestPaths", "size": 5914},
-      {"name": "SpanningTree", "size": 3416}
-     ]
-    },
-    {
-     "name": "optimization",
-     "children": [
-      {"name": "AspectRatioBanker", "size": 7074}
-     ]
-    }
-   ]
-  },
-  {"name": "Pippo", "size": 3938},
-  {"name": "buonanotte", "size": 3812},
-  {"name": "Avantieri", "size": 6714}
- ]
-} 
+	"nodes": [
+		{
+			"name": "Node #1",
+			"url": "",
+			"id": 1,
+			"x": 204,
+			"y": 94,
+			"textcontent": "",
+			"children": [
+				{
+					"name": "Node #2",
+					"url": "",
+					"id": 2,
+					"x": 405,
+					"y": 125,
+					"textcontent": "",
+					"children": [
+						{
+							"name": "Node #3",
+							"url": "",
+							"id": 3,
+							"x": 487,
+							"y": 310,
+							"textcontent": ""
+						},
+						{
+							"name": "Node #5",
+							"url": "",
+							"id": 5,
+							"x": 595,
+							"y": 114,
+							"textcontent": ""
+						},
+						{
+							"name": "Node #8",
+							"url": "",
+							"id": 8,
+							"x": 544,
+							"y": 217,
+							"textcontent": ""
+						}
+					]
+				},
+				{
+					"name": "Node #4",
+					"url": "",
+					"id": 4,
+					"x": 282,
+					"y": 248,
+					"textcontent": "",
+					"children": [
+						{
+							"name": "Node #6",
+							"url": "",
+							"id": 6,
+							"x": 321,
+							"y": 393,
+							"textcontent": ""
+						},
+						{
+							"name": "Node #7",
+							"url": "",
+							"id": 7,
+							"x": 146,
+							"y": 311,
+							"textcontent": ""
+						}
+					]
+				}
+			]
+		}
+	],
+	"viewport": {
+		"scale": 1,
+		"translate": [
+			25,
+			30
+		]
+	}
+}

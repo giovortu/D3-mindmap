@@ -7,7 +7,7 @@
     <script src="d3.mindmap.js"></script>
 </head>
 
-<body onload="makeMindMap( )">
+<body>
 
     <div id="container"></div>
     <textarea id="results"></textarea>
@@ -19,7 +19,7 @@
     function makeMindMap()
     {
     
-        var nodes = {"nodes":[{"name":"Node #2","isLeaf":false,"url":"","id":2,"x":438,"y":290,"index":3,"weight":2,"px":438,"py":290,"textcontent":"","children":[{"name":"Node #3","isLeaf":false,"url":"","id":3,"x":434.7869053998792,"y":126.08952103061995,"index":1,"weight":2,"px":434.7869053998792,"py":126.08952103061995,"textcontent":"","children":[{"name":"Node #5","isLeaf":true,"url":"","id":5,"x":530.6750199637617,"y":202.5292436442836,"index":0,"weight":1,"px":530.2308594966681,"py":202.59867903978494,"textcontent":""}],"_children":null,"size":null},{"name":"Node #4","isLeaf":true,"url":"","id":4,"x":312.95727153212437,"y":313.2411604137619,"index":2,"weight":1,"px":313.3509356252495,"py":312.99030522270124,"textcontent":""}],"_children":null,"size":null}],"viewport":{"scale":1,"translate":[25,31]}}
+        var nodes = {"nodes":[{"name":"Node #1","url":"","id":1,"x":204,"y":94,"textcontent":"","children":[{"name":"Node #2","url":"","id":2,"x":405,"y":125,"textcontent":"","children":[{"name":"Node #3","url":"","id":3,"x":487,"y":310,"textcontent":""},{"name":"Node #5","url":"","id":5,"x":595,"y":114,"textcontent":""},{"name":"Node #8","url":"","id":8,"x":544,"y":217,"textcontent":""}],"status":"collapsed"},{"name":"Node #4","url":"","id":4,"x":282,"y":248,"textcontent":"","children":[{"name":"Node #6","url":"","id":6,"x":321,"y":393,"textcontent":""},{"name":"Node #7","url":"","id":7,"x":146,"y":311,"textcontent":""}],"status":"expanded"}],"status":"expanded"}],"viewport":{"scale":1,"translate":[25,30]}}
         
         d3.mindMap(  { 
                 "editable": true, 
@@ -27,18 +27,13 @@
                 "results": "results",
                 "width" : 760,
                 "height" : 500,
-                "initialDistance" : 150, 
-                "textXMargin" : 10,
-                "textYMargin" : 10,
-                "boxRadius" : 20,
-                "fontSize" : 12,
-                "fixedNodes": false,
+                "fixedNodes": true,
                 "nodes": nodes
                 
                 } );
     
     }
-     
+     makeMindMap()
 
  
  </script>
