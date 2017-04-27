@@ -3,20 +3,15 @@
    d3.mindMap = function (options) {
 
             
-
+            /*JSON objects clone method*/
             if (typeof JSON.clone !== "function") {
                 JSON.clone = function(obj) {
                     return JSON.parse(JSON.stringify(obj));
                 };
             }
 
-            var enableEdit = options && options.editable;
-
-            var containerID = ( options && options.container ) || "cont";
             
-            var resultsID = ( options && options.results ) || "result";
-            
-            
+            /*context menu plugin*/
             d3.contextMenu = function(menu, openCallback) {
 
                 // create the div element that will hold the context menu
@@ -36,7 +31,7 @@
                 return function(data, index) {
                     var elm = this;
 
-                    d3.selectAll("div#renamer").remove();
+                    d3.selectAll("div#d3-mindmap-node-editor").remove();
                     
                     d3.selectAll('.d3-context-menu').html('');
                     var list = d3.selectAll('.d3-context-menu').append('ul');
@@ -69,26 +64,56 @@
             };
 
 
+            /* bring to front elements*/
             d3.selection.prototype.moveToFront = function() {
                 return this.each(function() {
                     this.parentNode.appendChild(this);
                 });
             };
             
+            function checkKey( event ) {
+                    
+                        shiftClicked = event.shiftKey;
+                        ctrlClicked = event.ctrlKey;
+                    
+                }
+            
+            /* keys management */
+            d3.select("body")
+                .on("keydown", function() {
+                    
+                        checkKey( d3.event );
+                    
+                })
+                .on("keyup", function() {
+                    
+                      checkKey( d3.event );
+                    
+            });
+            
+            /*constants*/
             var rectWidth = 120,
                 rectHeight = 20,
-                scale = 1
+                scale = 1,
+                linkWeight = 2
+                shiftClicked = false,
+                ctrlClicked = false
 
-            var width = ( options && options.width ) || 960,
-                height = ( options && options.height ) || 500,
+            /*parameters*/
+            var width           = ( options && options.width ) || 960,
+                height          = ( options && options.height ) || 500,
                 initialDistance = ( options && options.initialDistance ) || 150, 
-                textXMargin =( options && options.textXMargin ) ||  10,
-                textYMargin = ( options && options.textYMargin ) || 10,
-                boxRadius = ( options && options.boxRadius ) || 20,
-                fontSize = ( options && options.fontSize ) || 12,
-                linkWeight =( options && options.linkWeight ) ||  2
+                textXMargin     = ( options && options.textXMargin ) ||  10,
+                textYMargin     = ( options && options.textYMargin ) || 10,
+                boxRadius       = ( options && options.boxRadius ) || 20,
+                fontSize        = ( options && options.fontSize ) || 12,
+                enableEdit      = ( options && options.editable ) 
+                containerID     = ( options && options.container ) || "cont"
+                resultsID       = ( options && options.results ) || "result"
+                fixedNodes      = ( options && options.fixedNodes ) 
+                
 
-
+            /*text element text wrapping*/
             function wrap(text, width) {
                 text.each(function() {
 
@@ -112,9 +137,9 @@
 
 
             
-            var nodesData = {"nodes":[{"name":"Node #1","url":"","id":1,"textcontent":"","children":[{"name":"Node #2","url":"","id":2,"textcontent":"","children":[{"name":"Node #4","url":"","id":4,"textcontent":"fdsfadsf","x":151.08219707677517,"y":295.45490720780356,"isLeaf":true,"fixed":true,"index":0,"weight":1,"px":151.08219707677517,"py":295.45490720780356}],"x":235.8937510318533,"y":182.3733032038973,"status":"expanded","size":null,"isLeaf":false,"fixed":true,"index":1,"weight":2,"px":235.8937510318533,"py":182.3733032038973},{"name":"Node #3","url":"","id":3,"textcontent":"","children":[{"name":"Node #5","url":"","id":5,"textcontent":"asASAssadasd","x":633.1094041574374,"y":242.7586565108262,"isLeaf":true,"fixed":true,"index":2,"weight":1,"px":633.1094041574374,"py":242.7586565108262}],"x":532.8230424631015,"y":320.64001942586526,"size":null,"isLeaf":false,"fixed":true,"index":3,"weight":2,"px":532.8230424631015,"py":320.64001942586526},{"name":"Node #11","url":"","id":11,"x":434.51669423303247,"y":77.91808946517966,"textcontent":"","isLeaf":true,"fixed":true,"index":4,"weight":1,"px":434.51669423303247,"py":77.91808946517966}],"x":426.04253948400174,"y":212.4002807429598,"status":"expanded","size":null,"isLeaf":false,"fixed":true,"index":5,"weight":3,"px":426.04253948400174,"py":212.4002807429598},{"name":"Node #6","url":"","id":6,"textcontent":"Cioa","children":[{"name":"Node #7","url":"","id":7,"textcontent":"","x":995.1550359929468,"y":64.34072301826725,"isLeaf":true,"fixed":true,"index":6,"weight":1,"px":995.1550359929468,"py":64.34072301826725},{"name":"Node #14","url":"","id":14,"x":715.6108559482882,"y":30.002076322905594,"textcontent":"","isLeaf":true,"fixed":true,"index":7,"weight":1,"px":715.6108559482882,"py":30.002076322905594}],"x":860.026679059353,"y":200.73343465767155,"status":"expanded","size":null,"isLeaf":false,"fixed":true,"index":8,"weight":2,"px":860.026679059353,"py":200.73343465767155,"_children":null},{"name":"Node #12","url":"","id":12,"x":244.3172607421875,"y":39.29343032836914,"textcontent":"","children":[{"name":"Node #13","url":"","id":13,"x":370.0000971163124,"y":-74.98602083079672,"textcontent":"","isLeaf":true,"fixed":true,"index":9,"weight":1,"px":370.0000971163124,"py":-74.98602083079672}],"size":null,"isLeaf":false,"fixed":true,"index":10,"weight":1,"px":244.3172607421875,"py":39.29343032836914}],"viewport":{"scale":0.7695036100804311,"translate":[53.63826716139317,134.62409747989219]}}
+            var nodesData = ( options && options.nodes ) || {"nodes":[], "viewport":{"scale":1,"translate":[0,0]} }
             
-            
+           
             var root = nodesData.nodes;
                         
             var lastNodeID = countNodes( root ) + 1 ;
@@ -127,7 +152,7 @@
                             var nn = findNode(d.id, root);
                             var tt = svg.select("#JIKU_MM_TEXT_" + nn.id)[0][0];
                              
-                            d3.selectAll("div#renamer").remove();
+                            d3.selectAll("div#d3-mindmap-node-editor").remove();
                             
                             if (tt) {
                             
@@ -147,11 +172,11 @@
                                     nn.textcontent = _content;
 
                                     removed = true;
-                                    d3.selectAll("div#renamer").remove();
+                                    d3.selectAll("div#d3-mindmap-node-editor").remove();
                                     update(root);
                                 }
 
-                                frm = d3.select("body").append("div").attr("id", "renamer").attr("style", "top:" + _y + "px; left:" + _x + "px;")
+                                frm = d3.select("body").append("div").attr("id", "d3-mindmap-node-editor").attr("style", "top:" + _y + "px; left:" + _x + "px;")
 
                                 var removed = false;
 
@@ -169,7 +194,7 @@
 
                                 title = form
                                     .append("textarea")
-                                    .classed("rename-title", true)
+                                    .classed("d3-mindmap-node-editor-title", true)
 
 
 
@@ -205,8 +230,7 @@
                                     .text("Annulla")
                                     .on("click", function() {
                                         removed = true;
-                                        d3.selectAll("div#renamer").remove();
-                                        //update( root );
+                                        d3.selectAll("div#d3-mindmap-node-editor").remove();
 
                                     })
 
@@ -221,12 +245,11 @@
                                 w = d3.select('svg').clientWidth;
                                 h = d3.select('svg').clientHeight;
 
-                                _bound = d3.select(renamer).node().getBoundingClientRect();
+                                _bound = d3.select("#d3-mindmap-node-editor").node().getBoundingClientRect();
 
                                 px = _bound.left;
                                 py = _bound.top;
 
-                                //console.log(d3.select(renamer))
 
                             }
                         }
@@ -246,7 +269,12 @@
                         newNode.isLeaf = true;
                         newNode.x = _x;
                         newNode.y = _y;
-                        newNode.fixed = true
+                        
+                        if ( fixedNodes )
+                            newNode.fixed = true;
+                        else
+                            delete newNode.fixed;
+    
 
                         if (!Array.isArray(root)) {
                             root = [root];
@@ -303,7 +331,11 @@
                                 newNode.name = "Node #" + lastNodeID;
                                 newNode.x = nn.x + initialDistance * Math.sin( angle );
                                 newNode.y = nn.y + initialDistance * Math.cos( angle ) ;
-                                newNode.fixed = true
+                                
+                                if ( fixedNodes )
+                                    newNode.fixed = true;
+                                else
+                                    delete newNode.fixed;
 
                                 child.push(newNode);
                                 nn.isLeaf = false;
@@ -427,7 +459,10 @@
                     .attr("markerHeight", 6)
                     .attr("orient", "auto")
                     .append("svg:path")
-                    .attr("d", "M0,-5L10,0L0,5");
+                    .attr("d", "M0,-5L10,0L0,5L0,-5")
+                    .attr("stroke-width",1)
+                    .attr("stroke","#c0c0c0")
+                    .attr("fill","#606060")
                 
                 
 
@@ -471,9 +506,9 @@
                     .nodes(nodes)
                     .links(links)
                     .linkDistance(fontSize * 10)
-                    .charge(-620)
-                    .gravity(.05)
-                    .friction(0.9)
+                    .charge(-800)
+                    .gravity(.07)
+                    .friction(0.1)
                     .size([width, height])                    
                     .start()
 
@@ -481,7 +516,7 @@
                 var drag = force.drag()
                 
                 
-                if (enableEdit) {
+                if ( enableEdit ) {
                 
                 drag
                 .on("drag", nodedrag )
@@ -518,8 +553,6 @@
                     .attr("class", "node")
                     .on("click", onclick)
                     .on("touchstart", onclick)
-                    .on("mouseup", mouseup)
-                    .on("mousedown", mousedown)
                     .on("mouseover", mouseover)
                     .on("mouseout", mouseout)
                     
@@ -625,10 +658,10 @@
                     anchors = childs[0].childNodes;
                     
 
-                    var _rect = anchors[0];
-                    var _text = anchors[1];
+                    _rect = anchors[0];
+                    _text = anchors[1];
 
-                    var textSize = _text.getBBox();
+                    textSize = _text.getBBox();
 
 
                     w = textSize.width + 2 * textXMargin;
@@ -645,16 +678,16 @@
                     
                     
                     
-                    var _circles = d3.selectAll('g.textcontentcircle');
+                    _circles = d3.select(elem).select('g.textcontentcircle');
                     
-                    _circles.attr("transform", "translate(" + "0" + "," + h/2 + ")")
+                    _circles.attr("transform", "translate(" + w/2 + "," + ( h/2 ) + ")")
                     .attr("visibility", function(d,i){
                     
                         if(d.textcontent) 
                             return "visible";
                         return "hidden";
                     
-                })
+                        })
 
   
 
@@ -675,7 +708,7 @@
             
             function linkArc(d) {          
             
-               perc = 0.7;
+               perc = 0.6;
             
                targetX = (d.source.x + perc * ( d.target.x- d.source.x ) )
                targetY = (d.source.y + perc * ( d.target.y- d.source.y ) )
@@ -688,7 +721,7 @@
 
             function tick() {
             
-            link.attr("d", linkArc);
+                link.attr("d", linkArc);
             
 
                 node.attr("transform", function(d) {   
@@ -697,7 +730,7 @@
                     
                 });
 
-                
+                 update(root);
 
             }
 
@@ -717,7 +750,7 @@
 
             }
             
-            
+            /* expand nodes */
             function expand(nodes) {           
             
             
@@ -760,6 +793,7 @@
             }
 
 
+            /* collapse nodes */
             function collapse(nodes) {
 
                 nodes.forEach(function(d) {
@@ -810,7 +844,7 @@
 
 
 
-
+            /* find in json flavour */
             function findJsonNode(id, root) {
 
                 if (hasValue(root)) {
@@ -824,6 +858,7 @@
                 return null;
             }
 
+            /* remove a node */
             function removeNode(id, _root) {
 
                 var i,
@@ -894,6 +929,7 @@
 
             }
 
+            /* filters node data to be saved */
             function filterAll(_currentNode) {
 
                 var i,
@@ -919,7 +955,7 @@
 
                 function _filter(currentNode) {
                     var _j, currentChild;
-
+                    
                     delete currentNode.fixed;
                     delete currentNode.px;
                     delete currentNode.py;
@@ -927,7 +963,7 @@
                     delete currentNode.isLeaf;
                     delete currentNode.index;
                     delete currentNode.size;
-                    //delete currentNode.status;
+
 
                     if (hasValue(currentNode)) {
 
@@ -973,14 +1009,12 @@
             }
 
 
+            /* find node in struct */
             function findNode(id, currentNode) {
 
                 var i,
                     currentChild,
                     result;
-
-               // console.log("find " + id);
-              //  console.log(currentNode)
 
                 if (Array.isArray(currentNode)) {
                     for (var i = 0; i < currentNode.length; i++) {
@@ -994,10 +1028,9 @@
                 } else {
 
                     if (id == currentNode.id) {
-                       // console.log("Found");
-                       // console.log(currentNode);
 
                         return currentNode;
+                        
                     } else {
 
                         if (hasValue(currentNode)) {
@@ -1015,19 +1048,14 @@
                                         return result;
                                     }
                                 }
-
                             }
-
                         }
-
-
                     }
-
                 }
                 return false;
             }
 
-            
+            /* count all nodes */
             function countNodes( root )
             {
                 if (Array.isArray(root)) {
@@ -1037,7 +1065,6 @@
                         root.forEach(function(elem) 
                         {
                             sum2+=recurse(elem);
-                            //console.log("sum2",sum2, recurse(elem))
                         });
                         
                         return sum2;
@@ -1063,16 +1090,10 @@
                                 }
                             
                         });
-
                         
-                    }
-                    
+                    }                    
                     return sum;
-
-
-                }
-            
-            
+                } 
             }
 
             // Returns a list of all nodes under the root.
@@ -1139,7 +1160,11 @@
                 function recurse(node) {
 
                     node.isLeaf = true;
-                    node.fixed = true;
+                    
+                   if ( fixedNodes )
+                       node.fixed = true;
+                   else
+                       delete node.fixed;
 
                     if (node.children) {
                         node.size = node.children.reduce(function(p, v) {
@@ -1176,7 +1201,6 @@
                         console.log("Collapsing " + d.id);
                         var jNode = findJsonNode(d.id, flroot);
 
-                        console.log(jNode.id + " has CHILD collapsed, was " + jNode.status);
                         jNode.status = "collapsed";
 
                         jNode.isLeaf = false;
@@ -1193,11 +1217,8 @@
                     d._children = null;
 
                     if (hasChilds(d)) {
-                        //console.log("Expanding " + d.id);
 
                         var jNode = findJsonNode(d.id, flroot);
-
-                        //console.log(jNode.id + " has CHILD expanded, was " + jNode.status);
 
                         jNode.status = "expanded";
 
@@ -1211,20 +1232,16 @@
             }
             
 
-            function dragstart(d) {
-            
+            function dragstart(d) {            
                 d3.event.sourceEvent.stopPropagation();
-                
-               
-
             }
             
-            var shiftClicked = false;
-            var ctrlClicked = false;
+
             
-            function nodedrag(dd) {        
             
-             
+            /* node movement */
+            function nodedrag(dd) {                  
+                
             
                 var selection = d3.selectAll("#JIKU_MM_NODE_" + dd.id);
                 
@@ -1259,24 +1276,16 @@
             
             }
             
-            function mouseup(d) {
             
-            }
-            
-            function mousedown(d) {
-            
-               shiftClicked = d3.event.shiftKey;
-               ctrlClicked = d3.event.ctrlKey;
-            
-            }
 
-            
+
+            /* focus and context menumanagement */
             function mouseover(d) {
             
                 div = d3.selectAll("div#container")
 
                 if (enableEdit) {
-                    input = d3.select("#renamer")[0][0];
+                    input = d3.select("#d3-mindmap-node-editor")[0][0];
                     if (input) return;
                 }
                 
@@ -1307,6 +1316,7 @@
 
             }
 
+            /* focus and context menumanagement */
             function mouseout(e) {
             
                 div = d3.selectAll("div#container")
@@ -1332,6 +1342,7 @@
             }
             
             
+            /* content display management */
             function onContent(d){
             
                 d3.event.preventDefault();
@@ -1369,19 +1380,16 @@
                     div.append("span").text( elem );
                     div.append("br")
                     });
-                    
-                    
-                }
-                
-                
-                                    
+                                        
+                }                   
             
             }
             
+            /* content display management */
             function outContent(d){
             
                 d3.selectAll("div#details").remove();
-                //div.on('contextmenu', d3.contextMenu(mainMenu));
+     
             
             }
 

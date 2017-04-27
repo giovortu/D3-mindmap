@@ -18,6 +18,9 @@
     
     function makeMindMap()
     {
+    
+        var nodes = {"nodes":[{"name":"Node #2","isLeaf":false,"url":"","id":2,"x":438,"y":290,"index":3,"weight":2,"px":438,"py":290,"textcontent":"","children":[{"name":"Node #3","isLeaf":false,"url":"","id":3,"x":434.7869053998792,"y":126.08952103061995,"index":1,"weight":2,"px":434.7869053998792,"py":126.08952103061995,"textcontent":"","children":[{"name":"Node #5","isLeaf":true,"url":"","id":5,"x":530.6750199637617,"y":202.5292436442836,"index":0,"weight":1,"px":530.2308594966681,"py":202.59867903978494,"textcontent":""}],"_children":null,"size":null},{"name":"Node #4","isLeaf":true,"url":"","id":4,"x":312.95727153212437,"y":313.2411604137619,"index":2,"weight":1,"px":313.3509356252495,"py":312.99030522270124,"textcontent":""}],"_children":null,"size":null}],"viewport":{"scale":1,"translate":[25,31]}}
+        
         d3.mindMap(  { 
                 "editable": true, 
                 "container": "container", 
@@ -29,7 +32,9 @@
                 "textYMargin" : 10,
                 "boxRadius" : 20,
                 "fontSize" : 12,
-                "linkWeight" : 2
+                "fixedNodes": false,
+                "nodes": nodes
+                
                 } );
     
     }

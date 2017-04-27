@@ -87,18 +87,18 @@
 
 
 
-    #renamer .inner {
+    #d3-mindmap-node-editor .inner {
 
         width: 190px;
         margin: 5px;
     }
 
-    #renamer textarea.rename-title {
+    #d3-mindmap-node-editor .d3-mindmap-node-editor-title {
         height: 50px;
     }
 
 
-   #details, #renamer {
+   #details, #d3-mindmap-node-editor {
         position: absolute;
         width: 290px;
         background: #c0c0c0;
@@ -108,16 +108,16 @@
         border-radius: 15px;
     }
 
-    #renamer span {
+    #d3-mindmap-node-editor span {
         font-family: "Verdana", Times, serif;
     }
 
-    #renamer form {
+    #d3-mindmap-node-editor form {
         border: 0px;
         width: 100%;
     }
 
-    #renamer textarea {
+    #d3-mindmap-node-editor textarea {
         border: 1px solid #ff4d4a;
         border-radius: 15px;
         width: 85%;
@@ -129,7 +129,7 @@
         font-family: "Verdana", Times, serif;
     }
 
-    #renamer input {
+    #d3-mindmap-node-editor input {
         border: 1px solid #ff4d4a;
         border-radius: 15px;
         width: 85%;
