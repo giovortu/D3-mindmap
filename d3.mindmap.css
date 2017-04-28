@@ -1,7 +1,7 @@
    
    .d3-mindmap-link {
 
-        fill: none;
+        fill: #000000;
         stroke: #666;
         stroke-width: 1.5px;
         pointer-events: none;
@@ -15,7 +15,7 @@
         stroke-width: 3px;
     }
 
-    rect.hover {
+    rect.d3-mindmap-hover {
 
         fill: #ff4d4a;
         stroke: #45454a;
@@ -41,7 +41,7 @@
 
 
 
-    text.hover {
+    text.d3-mindmap-hover {
 
         font-weight: bold;
         pointer-events: none;

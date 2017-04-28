@@ -34,18 +34,27 @@
                     d3.selectAll("div#d3-mindmap-node-editor").remove();
                     
                     d3.selectAll('.d3-context-menu').html('');
+                    
+                    d3.selectAll('.d3-context-menu').on( "contextmenu", function(){ d3.event.preventDefault(); } );
                     var list = d3.selectAll('.d3-context-menu').append('ul');
+                    
+                    var dd =  d3.mouse( document.getElementById("d3-mindmap-svg-root") )
                     
                     var __x = d3.event.pageX;
                     var __y = d3.event.pageY;
+                    var relX = (dd[0] - trans[0]) / scale;
+                    var relY = (dd[1] - trans[1]) / scale;
                     
+                    
+                    
+                    var dd = d3.mouse;
                     list.selectAll('li').data(menu).enter()
                         .append('li')
                         .html(function(d) {
                             return d.title;
                         })
                         .on('click', function(d, i) {
-                            d.action(elm, data, index, __x, __y);
+                            d.action(elm, data, index, __x, __y, relX, relY );
                             d3.select('.d3-context-menu').style('display', 'none');
                         });
 
@@ -107,10 +116,11 @@
                 textYMargin     = ( options && options.textYMargin ) || 10,
                 boxRadius       = ( options && options.boxRadius ) || 20,
                 fontSize        = ( options && options.fontSize ) || 12,
-                enableEdit      = ( options && options.editable ) 
-                containerID     = ( options && options.container ) || "cont"
-                resultsID       = ( options && options.results ) || "result"
-                fixedNodes      = ( options && options.fixedNodes ) 
+                enableEdit      = ( options && options.editable ) ,
+                containerID     = ( options && options.container ) || "cont",
+                resultsID       = ( options && options.results ) || "result",
+                fixedNodes      = ( options && options.fixedNodes ),
+                nodes           = ( options && options.nodes ) || {"nodes":[],"viewport":{"scale":1,"translate":[0,0]}} 
                 
                 
 
@@ -180,8 +190,14 @@
                                     d3.selectAll("div#d3-mindmap-node-editor").remove();
                                     update(root);
                                 }
+                                
+                                posX = _x;
+                                posY = _y;
+                                
+                                //if ( posX > d3.
 
-                                frm = d3.select("body").append("div").attr("id", "d3-mindmap-node-editor").attr("style", "top:" + _y + "px; left:" + _x + "px;")
+                                
+                                frm = d3.select("body").append("div").attr("id", "d3-mindmap-node-editor")
 
                                 var removed = false;
 
@@ -246,14 +262,22 @@
                                     .classed("d3-mindmap-little-button", true)
                                     .text("Salva")
                                     .on("click", submit)
+                                    
+                                frmWidth = frm.node().getBoundingClientRect().width
+                                frmHeight = frm.node().getBoundingClientRect().height
+                                
+                                ww = window.innerWidth
+                                hh = window.innerHeight
+                                
+                               // console.log ( ww,hh )
+                                
+                                if ( posX + frmWidth > ww )
+                                    posX = ww - frmWidth;
+                                
+                                if ( posY + frmHeight > hh )
+                                    posY = hh - frmHeight;
 
-                                w = d3.select('svg').clientWidth;
-                                h = d3.select('svg').clientHeight;
-
-                                _bound = d3.select("#d3-mindmap-node-editor").node().getBoundingClientRect();
-
-                                px = _bound.left;
-                                py = _bound.top;
+                                frm.attr("style", "left:" + posX + "px; top:" + posY + "px;")
 
 
                             }
@@ -265,15 +289,15 @@
 
             var mainMenu = [{
                     title: 'Add new node',
-                    action: function(elm, d, i, _x,_y) {
+                    action: function(elm, d, i, _x,_y, rx, ry ) {
 
 
                         var newNode = JSON.clone(emptyNode);
                         newNode.id = ++lastNodeID;
                         newNode.name = "Node #" + lastNodeID;
                         newNode.isLeaf = true;
-                        newNode.x = _x;
-                        newNode.y = _y;
+                        newNode.x = rx;
+                        newNode.y = ry;
                         
                         if ( fixedNodes )
                             newNode.fixed = true;
@@ -318,7 +342,7 @@
 
             var menu = [{
                     title: 'Add sub node',
-                    action: function(elm, d, i, _x,_y) {
+                    action: function(elm, d, i, _x,_y , rx , ry) {
 
                         if (d) {
                             var nn = findNode(d.id, root);
@@ -351,12 +375,16 @@
 
                                 if (tt) {
                                     tt.attr("class", "d3-mindmap-parent");
+                                    
+                                    
                                 }
                                 //collapse( [nn] )
                                 //collapse( [nn] )
                                 update(root)
                                 
-                                edit(elm, newNode, i, _x,_y)
+                                d3.select("#JIKU_MM_NODE_" + d.id).moveToFront()
+                                
+                                edit(elm, newNode, i, _x,_y, rx , ry)
                             }
 
                             
@@ -487,6 +515,7 @@
     
                 
             var outer = div.append("svg")
+                .attr("id", "d3-mindmap-svg-root")
                 .classed("d3-mindmap-svg",true)
                 .attr("width", width)
                 .attr("height", height)
@@ -519,10 +548,10 @@
                 
                 
 
-            var link = svg.selectAll(".link")
+            var link = svg.selectAll(".d3-mindmap-link")
             
             
-            var node = svg.selectAll(".node");
+            var node = svg.selectAll(".d3-mindmap-node");
 
             translateandrescale( nodesData.viewport  );
             
@@ -568,14 +597,29 @@
 
                 // Restart the force layout.
                 force
-                    .nodes(nodes)
                     .links(links)
+                    .nodes(nodes)
                     .linkDistance(fontSize * 10)
                     .charge(-8000)
                     .gravity(.05)
                     .friction(0.1)
                     .size([width, height])                    
                     .start()
+                    
+                    
+                // Update links.
+                link = link.data(links, function(d) {
+                    return d.target.id;
+                })
+
+
+                link.exit().remove();
+                
+
+                link.enter().insert("path", "node")
+                    .classed("d3-mindmap-link", true )
+                    .style("stroke-width", linkWeight)
+                    .attr("marker-end", "url(#end)");                    
 
 
                 var drag = force.drag()
@@ -590,19 +634,7 @@
         
                 }
 
-                // Update links.
-                link = link.data(links, function(d) {
-                    return d.target.id;
-                })
 
-
-                link.exit().remove();
-                
-
-                link.enter().insert("path", ".node")
-                    .attr("class", "d3-mindmap-link")
-                    .style("stroke-width", linkWeight)
-                    .attr("marker-end", "url(#end)");
 
                 // Update nodes.
                 node = node.data(nodes, function(d) {
@@ -616,7 +648,7 @@
                     .attr("id", function(d) {
                             return "JIKU_MM_NODE_" + d.id;
                     })
-                    .attr("class", "node")
+                    .attr("class", "d3-mindmap-node")
                     .on("click", onclick)
                     .on("touchstart", onclick)
                     .on("mouseover", mouseover)
@@ -627,11 +659,11 @@
 
                 }
 
-                var a = nodeEnter.append("a")
+               // var a = nodeEnter.append("a")
                 
                    
 
-                var rect = a.append("rect")
+                var rect = nodeEnter.append("rect")
                     .attr("x", 0)
                     .attr("y", 0)
                     .attr("rx", boxRadius)
@@ -656,7 +688,7 @@
 
 
 
-                var txt = a.append("text")
+                var txt = nodeEnter.append("text")
 
 
                     .attr("class", "text")
@@ -706,15 +738,15 @@
                 
                
 
-                var gs = d3.selectAll('g.node');
+                var gs = d3.selectAll('g.d3-mindmap-node');
 
                 if (enableEdit) 
                 {
-                    a.on('contextmenu', d3.contextMenu(menu));
+                    rect.on('contextmenu', d3.contextMenu(menu));
                 }
                 else
                 {
-                    a.on('contextmenu', d3.contextMenu(viewMenu));
+                    rect.on('contextmenu', d3.contextMenu(viewMenu));
                 }
 
                 gs[0].forEach(function(elem) {
@@ -725,8 +757,8 @@
                     anchors = childs[0].childNodes;
                     
 
-                    _rect = anchors[0];
-                    _text = anchors[1];
+                    _rect = childs[0];
+                    _text = childs[1];
 
                     textSize = _text.getBBox();
 
@@ -832,13 +864,13 @@
                     
                     expand( d );
                     
+                    
+                    
                 });
                 
                 }
                 else
-                {
-                        
-                    
+                {   
 
                     if (nodes._children) {
 
@@ -862,7 +894,7 @@
                     
                 }
 
-
+            
             }
 
 
@@ -1357,39 +1389,39 @@
 
             /* focus and context menumanagement */
             function mouseover(d) {
-            
-                div = d3.selectAll("div#container")
+               
+                div = d3.selectAll("div#" + containerID )
 
                 if (enableEdit) {
-                    input = d3.select("#d3-mindmap-node-editor")[0][0];
+                    input = d3.select("#d3-mindmap-node-editor").node();
                     if (input) return;
                 }
                 
                 zoom.on("zoom", function(){ });
 
                 outer.call(zoom.event)
-
-
-                var selection = d3.select(this).select("rect");
                 
-                
+                var node = d3.select(this);
+                var selection = node.select("rect");
                 var text = d3.select(this).select("text");
                
                 
-                d3.select(this).moveToFront();
+                node.moveToFront();
 
-                selection.classed("hover", true);
-                text.classed("hover", true);
+                selection.classed("d3-mindmap-hover", true);
+                text.classed("d3-mindmap-hover", true);
 
                 div.on('contextmenu',  null );
+                node.on('contextmenu', null );
+                node.on('contextmenu', d3.contextMenu(viewMenu));
                     
                 if (enableEdit)
                 { 
-                    selection.on('contextmenu', d3.contextMenu(menu));
+                    node.on('contextmenu', d3.contextMenu(menu));
                 }
                 else
                 {
-                    selection.on('contextmenu', d3.contextMenu(viewMenu) );
+                    node.on('contextmenu', d3.contextMenu(viewMenu) );
                 }
 
 
@@ -1397,22 +1429,22 @@
 
             /* focus and context menumanagement */
             function mouseout(e) {
-            
-                div = d3.selectAll("div#container")
+
+                div = d3.selectAll("div#" + containerID)
                 
-               
-              
                 zoom.on("zoom",translateandrescale );
                 outer.call(zoom)
 
 
-                var selection = d3.select(this).select("rect");
+                var node = d3.select(this);
+                var selection = node.select("rect");
                 var text = d3.select(this).select("text");
 
-                selection.classed("hover", false);
-                text.classed("hover", false);
+                selection.classed("d3-mindmap-hover", false);
+                text.classed("d3-mindmap-hover", false);
                 
-                selection.on('contextmenu', null );
+                div.on('contextmenu', null );
+                node.on('contextmenu', null );
 
                 if (enableEdit)
                 {
@@ -1432,7 +1464,7 @@
             
                 d3.event.preventDefault();            
                
-                div = d3.selectAll("div#container")            
+                div = d3.selectAll("div#" + containerID)            
            
                 rem = d3.selectAll("div#d3-mindmap-details");
                 
@@ -1445,7 +1477,7 @@
                 
                 if (enableEdit) {
                 
-                div.on('contextmenu', d3.contextMenu(mainMenu));
+                    div.on('contextmenu', d3.contextMenu(mainMenu));
             
                 }
                 
