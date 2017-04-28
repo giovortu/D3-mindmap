@@ -553,6 +553,7 @@
             
             var node = svg.selectAll(".d3-mindmap-node");
 
+            
             translateandrescale( nodesData.viewport  );
             
             update(root)
@@ -592,13 +593,15 @@
 
 
                 flroot = nodes;
+                
+   
 
                 updateResult();
 
                 // Restart the force layout.
                 force
-                    .links(links)
                     .nodes(nodes)
+                    .links(links)
                     .linkDistance(fontSize * 10)
                     .charge(-8000)
                     .gravity(.05)
@@ -615,11 +618,13 @@
 
                 link.exit().remove();
                 
+            
 
-                link.enter().insert("path", "node")
+                link.enter().insert("path", ".d3-mindmap-node")
                     .classed("d3-mindmap-link", true )
                     .style("stroke-width", linkWeight)
-                    .attr("marker-end", "url(#end)");                    
+                    .attr("marker-end", "url(#end)");     
+                    
 
 
                 var drag = force.drag()
@@ -816,7 +821,7 @@
             }
 
             
-     
+
             
 
             function tick() {
