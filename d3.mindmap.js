@@ -429,7 +429,7 @@
             
             var zoomControls = div.append( "div" ).attr("id", "d3-mindmap-zoom-controls" );
             
-            var helpControls = div.append( "div" ).attr("id", "d3-mindmap-help-controls" );
+            /*var helpControls = div.append( "div" ).attr("id", "d3-mindmap-help-controls" );
             
             var helpButton = null;
             
@@ -437,9 +437,10 @@
             
                 helpButton = helpControls.append("button")
                             .text("Help")
-                            .classed("d3-mindmap-little-button",true);
+                            .classed("d3-mindmap-little-button",true)
+                            .on("click", showHelp )
            
-            }
+            }*/
             
             var zoomPlus = zoomControls.append("button")
                             .text("Zoom +")
@@ -523,12 +524,6 @@
             
             var node = svg.selectAll(".node");
 
-
-            var rootNodes = findRootNodes(root);
-
-
-            //update(root)
-            //collapse(findRootNodes(root));
             translateandrescale( nodesData.viewport  );
             
             update(root)
@@ -545,10 +540,7 @@
 
                 
                 if ( scale && trans )
-                {
-                    
-                    
-                    
+                {   
                     tr1 = [ trans[0] *scale    , trans[1]*scale  ]
                     tr2 = [ trans[0] /scale    , trans[1]/scale  ]
 
@@ -572,11 +564,7 @@
 
                 flroot = nodes;
 
-                rootNodes = findRootNodes(root);
-
-
                 updateResult();
-
 
                 // Restart the force layout.
                 force
@@ -612,7 +600,7 @@
                 
 
                 link.enter().insert("path", ".node")
-                    .attr("class", "link")
+                    .attr("class", "d3-mindmap-link")
                     .style("stroke-width", linkWeight)
                     .attr("marker-end", "url(#end)");
 
@@ -1438,14 +1426,13 @@
             }
             
             
+            
             /* content display management */
             function onContent(d){
             
-                d3.event.preventDefault();
-            
+                d3.event.preventDefault();            
                
-                div = d3.selectAll("div#container")
-            
+                div = d3.selectAll("div#container")            
            
                 rem = d3.selectAll("div#d3-mindmap-details");
                 
@@ -1489,7 +1476,9 @@
             
             }
             
-                        function interpolateZoom (translate, scale) {
+            
+            /* function for button zoom animation */
+            function interpolateZoom (translate, scale) {
                 var self = this;
                 return d3.transition().duration(350).tween("zoom", function () {
                     var iTranslate = d3.interpolate(zoom.translate(), translate),

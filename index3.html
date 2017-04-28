@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
     <LINK href="d3.mindmap.css" rel="stylesheet" type="text/css">
-    <script src="d3.v3.min.js"></script>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
     <script src="d3.mindmap.js"></script>
 </head>
 
 <body>
 
     <div id="container"></div>
-    <textarea id="results"></textarea>
+    <textarea id="results" style="width:700px; height:200px;"></textarea>
 
 
 
@@ -19,7 +19,8 @@
     function makeMindMap()
     {
     
-        var nodes = {"nodes":[{"name":"Node #1","url":"","id":1,"x":204,"y":94,"textcontent":"","children":[{"name":"Node #2","url":"","id":2,"x":405,"y":125,"textcontent":"","children":[{"name":"Node #3","url":"","id":3,"x":487,"y":310,"textcontent":""},{"name":"Node #5","url":"","id":5,"x":595,"y":114,"textcontent":""},{"name":"Node #8","url":"","id":8,"x":544,"y":217,"textcontent":""}],"status":"collapsed"},{"name":"Node #4","url":"","id":4,"x":282,"y":248,"textcontent":"","children":[{"name":"Node #6","url":"","id":6,"x":321,"y":393,"textcontent":""},{"name":"Node #7","url":"","id":7,"x":146,"y":311,"textcontent":""}],"status":"expanded"}],"status":"expanded"}],"viewport":{"scale":1,"translate":[25,30]}}
+        var nodes = {"nodes":[{"name":"Node #1","url":"","id":1,"x":224,"y":133,"textcontent":"","children":[{"name":"Node #2","url":"","id":2,"x":402,"y":231,"textcontent":"","children":[{"name":"Node #3","url":"","id":3,"x":488,"y":393,"textcontent":""},{"name":"Node #5","url":"","id":5,"x":451,"y":100,"textcontent":""},{"name":"Node #8","url":"","id":8,"x":554,"y":273,"textcontent":"","children":[{"name":"Node #10","url":"","id":10,"x":735,"y":301,"textcontent":""},{"name":"Node #11","url":"","id":11,"x":643,"y":410,"textcontent":""},{"name":"Node #12","url":"","id":12,"x":641,"y":155,"textcontent":""}]}]},{"name":"Node #4","url":"","id":4,"x":252,"y":337,"textcontent":"","children":[{"name":"Node #6","url":"","id":6,"x":291,"y":482,"textcontent":""},{"name":"Node #7","url":"","id":7,"x":116,"y":400,"textcontent":""}]},{"name":"Node #9","url":"","id":9,"x":85,"y":268,"textcontent":""},{"name":"Node #13","url":"","id":13,"x":75,"y":152,"textcontent":""},{"name":"Node #14","url":"","id":14,"x":102,"y":45,"textcontent":""},{"name":"Node #15","url":"","id":15,"x":277,"y":4,"textcontent":""}]}],"viewport":{"scale":0.8693878900208469,"translate":[28,30]}}
+        
         
         d3.mindMap(  { 
                 "editable": true, 
