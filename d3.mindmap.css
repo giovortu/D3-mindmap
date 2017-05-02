@@ -1,4 +1,31 @@
-   
+  svg path {
+  	opacity: 1;
+    animation : none;
+    animation-delay : 0;
+    animation-direction : normal;
+    animation-duration : 0;
+    animation-fill-mode : none;
+    animation-iteration-count : 1;
+    animation-name : none;
+    animation-play-state : running;
+    animation-timing-function : ease;
+  }
+
+
+  .d3-x-axis path,
+  .d3-y-axis path,
+  .d3-x-axis line,
+  .d3-y-axis line {
+    fill: none;
+    stroke: #fff;
+  }
+
+  .d3-x-axis text,
+  .d3-y-axis text {
+    fill:black;
+    font-size:10px;
+  }
+
    .d3-mindmap-link {
 
         fill: #000000;
@@ -69,33 +96,33 @@
         margin-bottom:5px;
         color: #45454a;
         outline: none;
-    
+
     }
-    
+
     .d3-mindmap-little-button:hover {
-    
+
         background-color: #ff4d4a;
         border: 3px solid #ff4d4a;
         color: #ffffff;
 
     }
-    
+
     #d3-mindmap-zoom-controls
     {
         position:absolute;
         right:5px;
         top:5px;
         width:85px;
-        background-color:transparent;        
+        background-color:transparent;
     }
-    
+
     #d3-mindmap-help-controls
     {
         position:absolute;
         left:5px;
         top:5px;
         width:85px;
-        background-color:transparent;        
+        background-color:transparent;
     }
 
 
@@ -231,9 +258,9 @@
         margin: 0px;
         color: #ffffff;
         outline: none;
-    } 
-    
-    
+    }
+
+
     .grid  {
         stroke-opacity:0.4;
         stroke-width: 1px;

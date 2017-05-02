@@ -23,26 +23,27 @@
 </div>
 
     <script>
-    
+
     function makeMindMap()
     {
-    
-        var nodes = {"nodes":[{"name":"Node #1 cvv sdjvksdv ajv ids vdsjv dsvjcads aijv dsfijdsfds\nlpè","url":"","id":1,"x":338,"y":256,"textcontent":"&%/32372&&%\n&#39","children":[{"name":"Node #2 vvfskàksfdg dsfdsfdosf sdf fds fdsfdsfsdf","url":"","id":2,"x":398,"y":105,"textcontent":""},{"name":"Node #3 dfidsf adsèfd sfidsf odsifdsfdsfdsfdsaf dsaf\n dsf dsfdsafdsafadsfdsafdasfdsafdsa\nf sf dsfdsaads fdsafdsafs","url":"","id":3,"x":365,"y":407,"textcontent":""}]}],"viewport":{"scale":1,"translate":[0,0]}}
-        
-        d3.mindMap(  { 
-                "editable": true, 
-                "container": "container", 
+
+        var nodes = {"nodes":[{"name":"Node #1","url":"","id":1,"x":349,"y":284,"textcontent":"","children":[{"name":"Node #2","url":"","id":2,"x":467,"y":192,"textcontent":""}]}],"viewport":{"scale":1,"translate":[0,0]}}
+
+
+        d3.mindMap(  {
+                "editable": true,
+                "container": "container",
                 "results": "results",
                 "width" : 760,
                 "height" : 500,
                 "fixedNodes": true,
                 "nodes":nodes
                 } );
-    
+
     }
      makeMindMap()
 
- 
+
  </script>
 
 

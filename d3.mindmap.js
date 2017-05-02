@@ -1,8 +1,8 @@
-/*  GIOVORTU */   
-   
+/*  GIOVORTU */
+
    d3.mindMap = function (options) {
 
-            
+
             /*JSON objects clone method*/
             if (typeof JSON.clone !== "function") {
                 JSON.clone = function(obj) {
@@ -10,7 +10,7 @@
                 };
             }
 
-            
+
             /*context menu plugin*/
             d3.contextMenu = function(menu, openCallback) {
 
@@ -24,29 +24,29 @@
                 d3.select('body').on('click.d3-context-menu', function() {
                     d3.select('.d3-context-menu').style('display', 'none');
                 });
-                
-                
+
+
 
                 // this gets executed when a contextmenu event occurs
                 return function(data, index) {
                     var elm = this;
 
                     d3.selectAll("div#d3-mindmap-node-editor").remove();
-                    
+
                     d3.selectAll('.d3-context-menu').html('');
-                    
+
                     d3.selectAll('.d3-context-menu').on( "contextmenu", function(){ d3.event.preventDefault(); } );
                     var list = d3.selectAll('.d3-context-menu').append('ul');
-                    
+
                     var dd =  d3.mouse( document.getElementById("d3-mindmap-svg-root") )
-                    
+
                     var __x = d3.event.pageX;
                     var __y = d3.event.pageY;
                     var relX = (dd[0] - trans[0]) / scale;
                     var relY = (dd[1] - trans[1]) / scale;
-                    
-                    
-                    
+
+
+
                     var dd = d3.mouse;
                     list.selectAll('li').data(menu).enter()
                         .append('li')
@@ -79,27 +79,27 @@
                     this.parentNode.appendChild(this);
                 });
             };
-            
+
             function checkKey( event ) {
-                    
+
                         shiftClicked = event.shiftKey;
                         ctrlClicked = event.ctrlKey;
-                    
+
                 }
-            
+
             /* keys management */
             d3.select("body")
                 .on("keydown", function() {
-                    
+
                         checkKey( d3.event );
-                    
+
                 })
                 .on("keyup", function() {
-                    
+
                       checkKey( d3.event );
-                    
+
             });
-            
+
             /*constants*/
             var rectWidth = 120,
                 rectHeight = 20,
@@ -109,9 +109,9 @@
                 ctrlClicked = false
 
             /*parameters*/
-            var width           = ( options && options.width ) || 960,
-                height          = ( options && options.height ) || 500,
-                initialDistance = ( options && options.initialDistance ) || 150, 
+            var _width           = ( options && options.width ) || 960,
+                _height          = ( options && options.height ) || 500,
+                initialDistance = ( options && options.initialDistance ) || 150,
                 textXMargin     = ( options && options.textXMargin ) ||  10,
                 textYMargin     = ( options && options.textYMargin ) || 10,
                 boxRadius       = ( options && options.boxRadius ) || 20,
@@ -120,9 +120,12 @@
                 containerID     = ( options && options.container ) || "cont",
                 resultsID       = ( options && options.results ) || "result",
                 fixedNodes      = ( options && options.fixedNodes ),
-                nodes           = ( options && options.nodes ) || {"nodes":[],"viewport":{"scale":1,"translate":[0,0]}} 
-                
-                
+                nodesData       = ( options && options.nodes ) || {"nodes":[],"viewport":{"scale":1,"translate":[0,0]}}
+
+            var margin = {top: 20, right: 20, bottom: 30, left: 40},
+                width = _width //- margin.left - margin.right,
+                height = _height // - margin.top - margin.bottom;
+
 
             /*text element text wrapping*/
             function wrap(text, width) {
@@ -145,37 +148,26 @@
                 })
             }
 
-
-
-            
-            var nodesData = ( options && options.nodes ) || {"nodes":[], "viewport":{"scale":1,"translate":[0,0]} }
-            
-           
             var root = nodesData.nodes;
-                        
             var lastNodeID = countNodes( root )  ;
-            
-            console.log ( lastNodeID )
-            
-            
-           
-            
+            //console.log ( lastNodeID )
+
             function edit(elm, d, i, _x,_y) {
 
                         if (d) {
 
                             var nn = findNode(d.id, root);
                             var tt = svg.select("#JIKU_MM_TEXT_" + nn.id)[0][0];
-                             
+
                             d3.selectAll("div#d3-mindmap-node-editor").remove();
-                            
+
                             if (tt) {
-                            
+
                                 var txt = nn.name;
                                 var textcontent = nn.textcontent || ""
 
                                 var txtElem = d3.select(tt);
-                                
+
                                 function submit() {
                                     var _title = title.node().value;
 
@@ -190,13 +182,10 @@
                                     d3.selectAll("div#d3-mindmap-node-editor").remove();
                                     update(root);
                                 }
-                                
+
                                 posX = _x;
                                 posY = _y;
-                                
-                                //if ( posX > d3.
 
-                                
                                 frm = d3.select("body").append("div").attr("id", "d3-mindmap-node-editor")
 
                                 var removed = false;
@@ -217,8 +206,6 @@
                                     .append("textarea")
                                     .classed("d3-mindmap-node-editor-title", true)
 
-
-
                                 title
                                     .attr("placeholder", "Inserire il titolo...")
                                     .attr("value", function() {
@@ -226,7 +213,7 @@
                                         title[0][0].value = txt;
                                         return txt;
                                     })
-                                
+
                                 form.append("span").text("Contenuto")
 
                                 inp = form
@@ -240,7 +227,7 @@
                                     return textcontent;
                                 })
 
-                                
+
                                 buttContainer = form.append("div")
 
                                 buttContainer.classed("inner", true)
@@ -252,28 +239,24 @@
                                     .on("click", function() {
                                         removed = true;
                                         d3.selectAll("div#d3-mindmap-node-editor").remove();
-
                                     })
-
-
-
 
                                 ok = buttContainer.append("xhtml:button")
                                     .classed("d3-mindmap-little-button", true)
                                     .text("Salva")
                                     .on("click", submit)
-                                    
+
                                 frmWidth = frm.node().getBoundingClientRect().width
                                 frmHeight = frm.node().getBoundingClientRect().height
-                                
+
                                 ww = window.innerWidth
                                 hh = window.innerHeight
-                                
+
                                // console.log ( ww,hh )
-                                
+
                                 if ( posX + frmWidth > ww )
                                     posX = ww - frmWidth;
-                                
+
                                 if ( posY + frmHeight > hh )
                                     posY = hh - frmHeight;
 
@@ -284,8 +267,8 @@
                         }
                     }
 
-            
-           
+
+
 
             var mainMenu = [{
                     title: 'Add new node',
@@ -298,19 +281,19 @@
                         newNode.isLeaf = true;
                         newNode.x = rx;
                         newNode.y = ry;
-                        
+
                         if ( fixedNodes )
                             newNode.fixed = true;
                         else
                             delete newNode.fixed;
-    
+
 
                         if (!Array.isArray(root)) {
                             root = [root];
                         }
 
                         root.push(newNode);
-                        
+
                         update(root);
 
                         edit(elm, newNode, i, _x,_y)
@@ -321,20 +304,19 @@
                 {
                     title: 'Expand all',
                     action: function(elm, d, i) {
-
                         expand( root  )
                         update( root )
                     }
-                    
+
                 },
                 {
                     title: 'Collapse all',
                     action: function(elm, d, i) {
-                        
+
                         collapse( root )
                         update( root )
                     }
-                    
+
                 }
             ]
 
@@ -355,15 +337,15 @@
                             var child = nn.children || nn._children || null;
 
                             if (child) {
-                            
+
                                 var angle = Math.random() * 2 * Math.PI;
-                                
+
                                 var newNode = JSON.clone(emptyNode);
                                 newNode.id = ++lastNodeID;
                                 newNode.name = "Node #" + lastNodeID;
                                 newNode.x = nn.x + initialDistance * Math.sin( angle );
                                 newNode.y = nn.y + initialDistance * Math.cos( angle ) ;
-                                
+
                                 if ( fixedNodes )
                                     newNode.fixed = true;
                                 else
@@ -375,19 +357,19 @@
 
                                 if (tt) {
                                     tt.attr("class", "d3-mindmap-parent");
-                                    
-                                    
+
+
                                 }
                                 //collapse( [nn] )
                                 //collapse( [nn] )
                                 update(root)
-                                
+
                                 d3.select("#JIKU_MM_NODE_" + d.id).moveToFront()
-                                
+
                                 edit(elm, newNode, i, _x,_y, rx , ry)
                             }
 
-                            
+
 
                         }
                     }
@@ -407,7 +389,7 @@
                     }
                 }
             ]
-            
+
             var viewMenu =
             [
                 {
@@ -417,16 +399,16 @@
                         expand( root  )
                         update( root )
                     }
-                    
+
                 },
                 {
                     title: 'Collapse all',
                     action: function(elm, d, i) {
-                        
+
                         collapse( root )
                         update( root )
                     }
-                    
+
                 }
             ]
 
@@ -444,93 +426,125 @@
 
                 .size([width, height])
                 .on("tick", tick)
-                
-                
-
-
 
 
             var div = d3.selectAll("div#" + containerID)
-            
+
             div.style("position","relative").style("width", width +"px").style("height", height+"px");
-            
-            
+
+
             var zoomControls = div.append( "div" ).attr("id", "d3-mindmap-zoom-controls" );
-            
+
             /*var helpControls = div.append( "div" ).attr("id", "d3-mindmap-help-controls" );
-            
+
             var helpButton = null;
-            
+
             if (enableEdit) {
-            
+
                 helpButton = helpControls.append("button")
                             .text("Help")
                             .classed("d3-mindmap-little-button",true)
                             .on("click", showHelp )
-           
+
             }*/
-            
+
             var zoomPlus = zoomControls.append("button")
                             .text("Zoom +")
                             .classed("d3-mindmap-little-button",true)
                             .attr("id","zoom_in")
-                            .on("click", zoomClick)  
-            
+                            .on("click", zoomClick)
+
             var zoomReset = zoomControls.append("button")
                             .text("Reset")
                             .classed("d3-mindmap-little-button",true)
                             .attr("id","zoom_reset")
-                            .on("click", zoomClick)  
-            
+                            .on("click", zoomClick)
+
             var zoomMinus = zoomControls.append("button")
                             .text("Zoom -")
                             .classed("d3-mindmap-little-button",true)
                             .attr("id","zoom_out")
-                            .on("click", zoomClick)  
-            
+                            .on("click", zoomClick)
 
-            if (enableEdit) 
+
+            if (enableEdit)
             {
                 div.on('contextmenu', d3.contextMenu(mainMenu));
             }
             else
             {
-                div.on('contextmenu', d3.contextMenu(viewMenu));   
+                div.on('contextmenu', d3.contextMenu(viewMenu));
             }
-            
-            
+
+
+            var x = d3.scale.linear()
+                .domain([-width / 2, width / 2])
+                .range([0, width]);
+
+            var y = d3.scale.linear()
+                .domain([-height / 2, height / 2])
+                .range([height, 0]);
+
+            var xAxis = d3.svg.axis()
+                .scale(x)
+                .orient("bottom")
+                .tickSize(-height);
+
+            var yAxis = d3.svg.axis()
+                .scale(y)
+                .orient("left")
+                .ticks(5)
+                .tickSize(-width);
+
+
             var zoom = d3.behavior.zoom()
                 .scaleExtent([0.2, 2.5])
+                .x(x)
+                .y(y)
                 .center([width / 2, height / 2])
                 .size([width, height])
-                
+
             if ( nodesData && nodesData.viewport &&  nodesData.viewport.scale )
                 zoom.scale( nodesData.viewport.scale );
-        
+
             if ( nodesData && nodesData.viewport &&  nodesData.viewport.translate )
-                zoom.translate( nodesData.viewport.translate );  
-  
+                zoom.translate( nodesData.viewport.translate );
+
             zoom.on("zoom", translateandrescale);
-            
-    
-                
-            var outer = div.append("svg")
-                .attr("id", "d3-mindmap-svg-root")
-                .classed("d3-mindmap-svg",true)
-                .attr("width", width)
-                .attr("height", height)
-                .attr("pointer-events", "all")
-               
-                
- 
-            var svg = outer
-                .call(zoom)
-                .append('svg:g')
-                
-          
+
+
+            var svg = d3.select("div#" + containerID).append("svg")
+            .attr("id", "d3-mindmap-svg-root")
+            .classed("d3-mindmap-svg",true)
+            .attr("width", _width)
+            .attr("height", _height)
+            .attr("pointer-events", "all")
+              .append("g")
+              //  .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+                .call(zoom);
+
+
+
+
+
+                svg.append("g")
+                    .attr("class", "d3-x-axis")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(xAxis);
+
+                svg.append("g")
+                    .attr("class", "d3-y-axis")
+                    .call(yAxis);
+
+
+
+                    rect = svg.append("g")
+                        .attr("width", width)
+                        .attr("height", height);
+
 
                 /*link arrow*/
-            outer.append("svg:defs").selectAll("marker")
+            svg.append("svg:defs").selectAll("marker")
                     .data(["end"])      // Different link/path types can be defined here
                     .enter().append("svg:marker")    // This section adds in the arrows
                     .attr("id", String)
@@ -545,42 +559,45 @@
                     .attr("stroke-width",1)
                     .attr("stroke","#c0c0c0")
                     .attr("fill","#606060")
-                
-                
 
-            var link = svg.selectAll(".d3-mindmap-link")
-            
-            
-            var node = svg.selectAll(".d3-mindmap-node");
 
-            
+
+            var link = rect.selectAll(".d3-mindmap-link")
+
+
+            var node = rect.selectAll(".d3-mindmap-node");
+
+
             translateandrescale( nodesData.viewport  );
-            
+
             update(root)
-           
+
 
             var flroot;
-            
+
             /* pan and zoom */
             function translateandrescale( ndata ) {
-            
-                
+
+              svg.select(".d3-x-axis").call(xAxis);
+              svg.select(".d3-y-axis").call(yAxis);
+
+
                 scale=( ndata && ndata.scale ) || ( d3.event && d3.event.scale );
                 trans=( ndata && ndata.translate ) || ( d3.event && d3.event.translate );
 
-                
+
                 if ( scale && trans )
-                {   
+                {
                     tr1 = [ trans[0] *scale    , trans[1]*scale  ]
                     tr2 = [ trans[0] /scale    , trans[1]/scale  ]
 
-                    svg.attr("transform", "scale(" + scale + ")" + "translate(" + tr2 + ")" );
-                    
+                    rect.attr("transform", "scale(" + scale + ")" + "translate(" + tr2 + ")" );
+
                     nodesData.viewport = { "scale" : scale, "translate" : tr1 }
-                    
+
                     updateResult();
                 }
-               
+
             }
 
 
@@ -593,8 +610,6 @@
 
 
                 flroot = nodes;
-                
-   
 
                 updateResult();
 
@@ -605,11 +620,11 @@
                     .linkDistance(fontSize * 10)
                     .charge(-8000)
                     .gravity(.05)
-                    .friction(0.1)
-                    .size([width, height])                    
+                    .friction(0.0)
+                    .size([width, height])
                     .start()
-                    
-                    
+
+
                 // Update links.
                 link = link.data(links, function(d) {
                     return d.target.id;
@@ -617,26 +632,26 @@
 
 
                 link.exit().remove();
-                
-            
+
+
 
                 link.enter().insert("path", ".d3-mindmap-node")
                     .classed("d3-mindmap-link", true )
                     .style("stroke-width", linkWeight)
-                    .attr("marker-end", "url(#end)");     
-                    
+                    .attr("marker-end", "url(#end)");
+
 
 
                 var drag = force.drag()
-                
-                
+
+
                 if ( enableEdit ) {
-                
+
                 drag
                 .on("drag", nodedrag )
                 .on("dragstart", dragstart)
                 .on("dragend", dragend);
-        
+
                 }
 
 
@@ -658,15 +673,12 @@
                     .on("touchstart", onclick)
                     .on("mouseover", mouseover)
                     .on("mouseout", mouseout)
-                    
-                if (enableEdit) {                    
+
+                if (enableEdit) {
                     nodeEnter.call(drag)
 
                 }
 
-               // var a = nodeEnter.append("a")
-                
-                   
 
                 var rect = nodeEnter.append("rect")
                     .attr("x", 0)
@@ -712,10 +724,10 @@
                     })
                     .call(wrap);
 
-                         
+
                 var circles = nodeEnter.append("g")
-                    .attr("class", "textcontentcircle")                
-             
+                    .attr("class", "textcontentcircle")
+
                 var circle = circles.append("circle")
                     .style("fill","#50e050")
                     .style("stroke","#505020")
@@ -728,7 +740,7 @@
                     .on("mouseover", onContent)
                     .on("mouseout", outContent)
 
-                    
+
                 var sym = circles.append("text")
                     .style("text-anchor", "middle")
                     .style("font-size", "15px")
@@ -739,13 +751,13 @@
                     .attr("height",12)
                     .text("i")
 
-                
-                
-               
+
+
+
 
                 var gs = d3.selectAll('g.d3-mindmap-node');
 
-                if (enableEdit) 
+                if (enableEdit)
                 {
                     rect.on('contextmenu', d3.contextMenu(menu));
                 }
@@ -754,19 +766,18 @@
                     rect.on('contextmenu', d3.contextMenu(viewMenu));
                 }
 
+
                 gs[0].forEach(function(elem) {
 
-                  
+
                     childs = elem.childNodes;
-                    
+
                     anchors = childs[0].childNodes;
-                    
 
                     _rect = childs[0];
                     _text = childs[1];
 
                     textSize = _text.getBBox();
-
 
                     w = textSize.width + 2 * textXMargin;
                     h = textSize.height + 2 * textYMargin;
@@ -779,63 +790,62 @@
 
                     _rect.setAttribute("width", w)
                     _rect.setAttribute("height", h)
-                    
-                    
-                    
+
+
+
                     _circles = d3.select(elem).select('g.textcontentcircle');
-                    
+
                     _circles.attr("transform", "translate(" + w/2 + "," + ( h/2 ) + ")")
                     .attr("visibility", function(d,i){
-                    
-                        if(d.textcontent) 
+
+                        if(d.textcontent)
                             return "visible";
                         return "hidden";
-                    
+
                         })
 
-  
+
 
 
                 });
+
 
 
             }
 
             function updateResult() {
-                
+
 
                 if (enableEdit && document.getElementById( resultsID )) {
                     // console.log(filterAll(root));
                         document.getElementById( resultsID ).value = JSON.stringify(filterAll( nodesData ));
                 }
-                
+
             }
-            
-            function linkArc(d) {          
-            
+
+            function linkArc(d) {
+
                perc = 0.65;
-            
+
                targetX = (d.source.x + perc * ( d.target.x- d.source.x ) )
                targetY = (d.source.y + perc * ( d.target.y- d.source.y ) )
                return "M"+  d.target.x + "," + d.target.y + "L" +  + d.source.x + "," + d.source.y + "M" + targetX + "," + targetY;
             }
 
-            
 
-            
+
+
 
             function tick() {
-            
-   
-                link.attr("d", linkArc);
-            
 
-                node.attr("transform", function(d) {   
+                link.attr("d", linkArc);
+
+                node.attr("transform", function(d) {
 
                     return "translate(" +d.x + "," + d.y + ")";
-                    
+
                 });
-                
+
                 if (fixedNodes )
                     force.stop();
 
@@ -859,89 +869,92 @@
                 return ret;
 
             }
-            
+
             /* expand nodes */
             function expand(nodes) {
-                
-                if (Array.isArray(nodes)) {
 
-                nodes.forEach(function(d) {
-                    
-                    expand( d );
-                    
-                    
-                    
-                });
-                
+                if (Array.isArray(nodes)) {
+                  nodes.forEach(function(d) {
+                      expand( d );
+                  });
                 }
                 else
-                {   
+                {
 
                     if (nodes._children) {
 
                         if ( nodes.children )
                         {
-                            nodes.children.forEach( function( e )
-                            {
-                                expand( e );
-                            });   
+
                         }
-                        nodes.children = nodes._children;
-                        nodes._children = null;
-                        
-                        nodes.children.forEach( function( e )
+                        else {
+                          nodes.children = []
+                        }
+
+                        nodes._children.forEach( function( e )
                         {
-                            expand( e );
+                            nodes.children.push( e );
+
                         });
 
-                    } 
+                        nodes._children = null;
+                    }
 
-                    
+                    if ( nodes.children )
+                    {
+                      nodes.children.forEach( function( e )
+                      {
+                          expand( e );
+                      });
+                    }
+
+
                 }
 
-            
+
             }
 
 
             /* collapse nodes */
             function collapse(nodes) {
-                
-                if (Array.isArray(nodes)) {
 
+              if (Array.isArray(nodes)) {
                 nodes.forEach(function(d) {
-                    
                     collapse( d );
-                    
                 });
-                
-                }
-                else
-                {
-                        
-                    
+              }
+              else
+              {
 
-                    if (nodes.children) {
-                        
-                        if ( nodes._children )
-                        {
-                            nodes._children.forEach( function( e )
-                            {
-                                collapse( e );
-                            });   
-                        }
+                  if (nodes.children) {
 
-                        nodes._children = nodes.children;
-                        nodes.children = null;
-                        
-                        nodes._children.forEach( function( e )
-                        {
-                            collapse( e );
-                        });
+                      if ( nodes._children )
+                      {
 
-                    } 
+                      }
+                      else {
+                        nodes._children = []
+                      }
 
-                    
-                }
+                      nodes.children.forEach( function( e )
+                      {
+                          nodes._children.push( e );
+
+                      });
+
+                      nodes.children = null;
+                  }
+
+                  if ( nodes._children )
+                  {
+                    nodes._children.forEach( function( e )
+                    {
+                        collapse( e );
+                    });
+                  }
+
+
+              }
 
 
             }
@@ -1038,12 +1051,12 @@
 
                 var i,
                     elem;
-                    
+
                     __currentNode = JSON.clone( _currentNode );
-                    
+
                     __currentNode.viewport.translate[0] = Math.floor(__currentNode.viewport.translate[0])
                     __currentNode.viewport.translate[1] = Math.floor(__currentNode.viewport.translate[1])
-                    
+
                     _nodes = __currentNode.nodes;
 
                 if (Array.isArray(_nodes)) {
@@ -1062,7 +1075,7 @@
 
                 function _filter(currentNode) {
                     var _j, currentChild;
-                    
+
                     delete currentNode.fixed;
                     delete currentNode.px;
                     delete currentNode.py;
@@ -1074,8 +1087,8 @@
 
                     currentNode.x =  Math.floor(currentNode.x)
                     currentNode.y =  Math.floor(currentNode.y)
-                    
-                    
+
+
 
                     if (hasValue(currentNode)) {
 
@@ -1112,7 +1125,7 @@
                     }
 
                 }
-                
+
                 __currentNode.nodes = _nodes;
 
                 return __currentNode;
@@ -1142,7 +1155,7 @@
                     if (id == currentNode.id) {
 
                         return currentNode;
-                        
+
                     } else {
 
                         if (hasValue(currentNode)) {
@@ -1171,42 +1184,42 @@
             function countNodes( root )
             {
                 if (Array.isArray(root)) {
-                
+
                         var sum2 = 0;
-                        
-                        root.forEach(function(elem) 
+
+                        root.forEach(function(elem)
                         {
                             sum2+=recurse(elem);
                         });
-                        
-                        
+
+
                         return sum2 + root.length;
 
                 } else {
-                
+
                     return recurse(root);
 
                 }
-                
+
                 function recurse(node) {
-                    
+
                     var sum = 0;
 
                     if (node.children) {
-                    
+
                         sum+= node.children.length ;
-                        
+
                         node.children.forEach(function(elem) {
-            
-                                if (elem.children) {    
+
+                                if (elem.children) {
                                     sum += recurse(elem)
                                 }
-                            
+
                         });
-                        
-                    }                    
+
+                    }
                     return sum;
-                } 
+                }
             }
 
             // Returns a list of all nodes under the root.
@@ -1273,7 +1286,7 @@
                 function recurse(node) {
 
                     node.isLeaf = true;
-                    
+
                    if ( fixedNodes )
                        node.fixed = true;
                    else
@@ -1339,78 +1352,78 @@
                 update(root);
 
             }
-            
 
-            function dragstart(d) {   
-                
+
+            function dragstart(d) {
+
                 d3.event.sourceEvent.stopPropagation();
             }
-            
-            function dragend(d) {            
+
+            function dragend(d) {
                 d3.event.sourceEvent.stopPropagation();
             }
-            
-            
-            
+
+
+
             /* node movement */
-            function nodedrag(dd) {                  
-                
-            
+            function nodedrag(dd) {
+
+
                 var selection = d3.selectAll("#JIKU_MM_NODE_" + dd.id);
-                
+
                 var nn = findNode(dd.id, root);
-                
+
                 nn.x = dd.px +d3.event.dx
                 nn.y = dd.py +d3.event.dy
-                
+
                 if ( ctrlClicked  && dd.children )
                 {
                     dd.children.forEach( function( elem ){
-                    
-                    
-                    
-                    var n = d3.select( "#JIKU_MM_NODE_" + elem.id );   
-                    
+
+
+
+                    var n = d3.select( "#JIKU_MM_NODE_" + elem.id );
+
                     nodedrag( elem );
-                    
-                         
+
+
                     n.attr("transform", function( d) {
-                    
+
                     d.px = d.px +d3.event.dx
                     d.py = d.py +d3.event.dy
-                    
+
                      })
-                     
+
                    });
-                    
+
                 }
 
                 update(root);
-            
+
             }
-            
-            
+
+
 
 
             /* focus and context menumanagement */
             function mouseover(d) {
-               
+
                 div = d3.selectAll("div#" + containerID )
 
                 if (enableEdit) {
                     input = d3.select("#d3-mindmap-node-editor").node();
                     if (input) return;
                 }
-                
+
                 zoom.on("zoom", function(){ });
 
-                outer.call(zoom.event)
-                
+                svg.call(zoom.event)
+
                 var node = d3.select(this);
                 var selection = node.select("rect");
                 var text = d3.select(this).select("text");
-               
-                
+
+
                 node.moveToFront();
 
                 selection.classed("d3-mindmap-hover", true);
@@ -1419,9 +1432,9 @@
                 div.on('contextmenu',  null );
                 node.on('contextmenu', null );
                 node.on('contextmenu', d3.contextMenu(viewMenu));
-                    
+
                 if (enableEdit)
-                { 
+                {
                     node.on('contextmenu', d3.contextMenu(menu));
                 }
                 else
@@ -1436,9 +1449,9 @@
             function mouseout(e) {
 
                 div = d3.selectAll("div#" + containerID)
-                
+
                 zoom.on("zoom",translateandrescale );
-                outer.call(zoom)
+                svg.call(zoom)
 
 
                 var node = d3.select(this);
@@ -1447,7 +1460,7 @@
 
                 selection.classed("d3-mindmap-hover", false);
                 text.classed("d3-mindmap-hover", false);
-                
+
                 div.on('contextmenu', null );
                 node.on('contextmenu', null );
 
@@ -1461,59 +1474,59 @@
                 }
 
             }
-            
-            
-            
+
+
+
             /* content display management */
             function onContent(d){
-            
-                d3.event.preventDefault();            
-               
-                div = d3.selectAll("div#" + containerID)            
-           
+
+                d3.event.preventDefault();
+
+                div = d3.selectAll("div#" + containerID)
+
                 rem = d3.selectAll("div#d3-mindmap-details");
-                
-                  
+
+
                 if ( !rem.empty() )
                 {
                     rem.remove();
                     return;
                 }
-                
+
                 if (enableEdit) {
-                
+
                     div.on('contextmenu', d3.contextMenu(mainMenu));
-            
+
                 }
-                
+
                 if ( d.textcontent )
                 {
-                
+
                     div = d3.select("body").append("div")
-                    
+
                     div.attr("id", "d3-mindmap-details").attr("style", "top:" + d3.event.pageY + "px; left:" + d3.event.pageX + "px;")
-                    
+
                     str = d.textcontent.split(/(?:\r\n|\r|\n)/g );
-                    
+
                     str.forEach( function( elem ){
-                    
+
                     div.append("span").text( elem );
                     div.append("br")
                     });
-                                        
-                }                   
-            
+
+                }
+
             }
-            
+
             /* content display management */
             function outContent(d){
-            
+
                 d3.selectAll("div#d3-mindmap-details").remove();
-     
-            
+
+
             }
-            
-            
+
+
             /* function for button zoom animation */
             function interpolateZoom (translate, scale) {
                 var self = this;
@@ -1524,15 +1537,15 @@
                         zoom
                             .scale(iScale(t))
                             .translate(iTranslate(t));
-                            
+
                         nodesData.viewport.scale = iScale(t)
                         nodesData.viewport.translate = iTranslate(t)
-                        
+
                         translateandrescale( nodesData.viewport )
                     };
                 });
             }
-                
+
 
             function zoomClick() {
                 var clicked = d3.event.target,
@@ -1564,8 +1577,6 @@
 
                 interpolateZoom([view.x, view.y], view.k);
             }
-            
+
 
         }
- 
- 
