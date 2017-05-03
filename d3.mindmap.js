@@ -140,12 +140,15 @@
 
                     interline = 10;
 
+
+                    fs = computedStyle(text.node() , "fontSize")  || "10";
+
                     lines = 0
 
                     text.text("");
 
                     words.forEach(function(word) {
-                        tspan = text.append("tspan").attr("x", 0).attr("dy", fontSize).text(word);
+                        tspan = text.append("tspan").attr("x", 0).attr("dy", fs).text(word);
                     })
 
 
@@ -794,7 +797,7 @@
                     _rect.setAttribute("x", -w / 2);
                     _rect.setAttribute("y", -h / 2);
 
-                    _text.setAttribute("y",  -h / 2 + fontSize );
+                    _text.setAttribute("y",  -h / 2 + fontSize / 2 );
 
                     _rect.setAttribute("width", w)
                     _rect.setAttribute("height", h)
@@ -1434,8 +1437,11 @@
 
                 node.moveToFront();
 
-                selection.classed("d3-mindmap-hover", true);
-                text.classed("d3-mindmap-hover", true);
+                if (enableEdit) {
+
+                    selection.classed("d3-mindmap-hover", true);
+                    text.classed("d3-mindmap-hover", true);
+                  }
 
                 div.on('contextmenu',  null );
                 node.on('contextmenu', null );
@@ -1519,9 +1525,9 @@
                     str.forEach( function( elem ){
 
                     st = elem ;
-                    if ( he )
+                    if ( typeof he == 'object' )
                     {
-                      st = he.decode(elem)
+                      st = he.decode(elem);
                     }
 
                     div.append("span").text( st );

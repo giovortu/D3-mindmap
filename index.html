@@ -188,7 +188,7 @@ img.emoji {
 <script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-image/v0.0.4/leaflet-image.js'></script>
 <script src="http://jikupin.com/assets/themes/jikupin/js/custom.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>
-<script src="he.js"></script>
+
 <script src="d3.mindmap.js"></script>
 <script src="http://jikupin.com/assets/themes/jikupin/js/html2canvas.js"></script>
 <script src="http://jikupin.com/assets/themes/jikupin/js/html2canvas.svg.js"></script>
@@ -201,7 +201,7 @@ img.emoji {
 function makeMindMap() {
   var nodes = mind;
   d3.mindMap(  {
-    "editable": true,
+    "editable": false,
     "container": "container",
     "results": "usp-custom-6",
     "width" : 900,
