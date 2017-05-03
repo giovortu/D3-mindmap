@@ -11,7 +11,13 @@
  *
  *
  */
+.d3-x-axis
+.d3-y-axis,
+ {
 
+  fill:#ff0000;
+
+}
 .d3-x-axis path,
 .d3-y-axis path,
 .d3-x-axis line,
@@ -33,8 +39,8 @@
 rect {
     rx: 20px !important;
     ry: 20px !important;
-    fill: #ffffff;
-    stroke: #45454a;
+    fill: #fff;
+    stroke: #A68F93;
     stroke-width: 3px;
 }
 rect.d3-mindmap-hover {
@@ -151,10 +157,10 @@ text.d3-mindmap-hover {
     color: #000000;
 }
 .d3-mindmap-parent {
-    stroke: #ff4d4a;
+    stroke: #024873;
 }
 .d3-mindmap-leaf {
-    stroke: #45454a;
+    stroke: #A68F93;
 }
 .d3-mindmap-hyperlink {
     font-style: italic;
