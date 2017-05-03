@@ -11,13 +11,6 @@
  *
  *
  */
-.d3-x-axis
-.d3-y-axis,
- {
-
-  fill:#ff0000;
-
-}
 .d3-x-axis path,
 .d3-y-axis path,
 .d3-x-axis line,
@@ -37,6 +30,7 @@
     pointer-events: none;
 }
 rect {
+    border-radius: 20px !important;
     rx: 20px !important;
     ry: 20px !important;
     fill: #fff;
