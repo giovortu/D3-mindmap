@@ -17,7 +17,7 @@
         <![endif]-->
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css">
         <link href="http://jikupin.com/assets/themes/jikupin/style.css" rel="stylesheet" type="text/css" media="screen">
-	<link href="https://cdn.rawgit.com/giovortu/D3-mindmap/master/d3.mindmap.css" rel="stylesheet" type="text/css" media="screen">
+	<link href="d3.mindmap.css" rel="stylesheet" type="text/css" media="screen">
         <link rel="alternate" hreflang="it" href="http://jikupin.com/sbarco-in-normandia/" />
 <link rel='dns-prefetch' href='//s.w.org' />
 		<script type="text/javascript">
@@ -201,7 +201,7 @@ img.emoji {
 function makeMindMap() {
   var nodes = mind;
   d3.mindMap(  {
-    "editable": false,
+    "editable": true,
     "container": "container",
     "results": "usp-custom-6",
     "width" : 900,

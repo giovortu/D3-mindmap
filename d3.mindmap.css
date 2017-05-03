@@ -54,13 +54,12 @@
     text {
 
         font-size: 16px;
-        font-family: bw_modelicabold, sans-serif;
+        font-family: 'bw_modelicaregular', "Verdana", Times, serif;
         font-weight: bold;
         pointer-events: none;
         fill: #000000;
         stroke-width: 0px;
         cursor: hand;
-
 
         -webkit-user-select: none;
         -moz-user-select: none;
@@ -98,6 +97,12 @@
         margin-bottom:5px;
         color: #45454a;
         outline: none;
+
+        transition:.5s;
+        -o-transition:.5s;
+        -ms-transition:.5s;
+        -moz-transition:.5s;
+        -webkit-transition:.5s;
 
     }
 
@@ -151,7 +156,7 @@
     }
 
     #d3-mindmap-node-editor span {
-        font-family: "Verdana", Times, serif;
+        font-family: 'bw_modelicaregular', "Verdana", Times, serif;
     }
 
     #d3-mindmap-node-editor form {
@@ -168,7 +173,8 @@
         margin: 5px;
         outline: none;
         resize: none;
-        font-family: "Verdana", Times, serif;
+        font-family: 'bw_modelicaregular', "Verdana", Times, serif;
+        color:#000000;
     }
 
     #d3-mindmap-node-editor input {
@@ -178,7 +184,8 @@
         padding: 10px;
         outline: none;
         margin: 5px;
-        font-family: "Verdana", Times, serif;
+        font-family:'bw_modelicaregular',"Verdana", Times, serif;
+        color:#000000;
     }
 
     .d3-mindmap-parent {
@@ -205,7 +212,7 @@
         background-color: #f2f2f2;
         border-radius: 4px;
 
-        font-family: Arial, sans-serif;
+        font-family: 'bw_modelicaregular', "Verdana", Times, serif;
         font-size: 14px;
         min-width: 150px;
         border: 1px solid #d4d4d4;

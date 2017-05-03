@@ -157,9 +157,8 @@
 
             var root = nodesData.nodes;
             var lastNodeID = countNodes( root )  ;
-            //console.log ( lastNodeID )
 
-            function edit(elm, d, i, _x,_y) {
+            function edit(elm, d, i, _x,_y, rx, ry) {
 
                         if (d) {
 
@@ -193,13 +192,14 @@
                                 posX = _x;
                                 posY = _y;
 
-                                frm = d3.select("body").append("div").attr("id", "d3-mindmap-node-editor")
+                                ww =document.documentElement.scrollWidth
+                                hh = document.documentElement.scrollHeight
 
+                                frm = d3.select("body").append("div").attr("id", "d3-mindmap-node-editor")
+                                frm.style("position","absolute")
                                 var removed = false;
 
                                 form = frm
-                                    .attr("x", d.x)
-                                    .attr("y", d.y)
                                     .append("xhtml:form")
                                     .on("submit", function() {
                                         d3.event.preventDefault();
@@ -253,21 +253,17 @@
                                     .text("Salva")
                                     .on("click", submit)
 
-                                frmWidth = frm.node().getBoundingClientRect().width
-                                frmHeight = frm.node().getBoundingClientRect().height
+                                    frmWidth = frm.node().getBoundingClientRect().width
+                                    frmHeight = frm.node().getBoundingClientRect().height
 
-                                ww = window.innerWidth
-                                hh = window.innerHeight
 
-                               // console.log ( ww,hh )
+                                    if ( posX + frmWidth > ww )
+                                        posX = ww - frmWidth;
 
-                                if ( posX + frmWidth > ww )
-                                    posX = ww - frmWidth;
+                                    if ( posY + frmHeight > hh )
+                                        posY = hh - frmHeight;
 
-                                if ( posY + frmHeight > hh )
-                                    posY = hh - frmHeight;
-
-                                frm.attr("style", "left:" + posX + "px; top:" + posY + "px;")
+                                    frm.attr("style", "left:" + posX + "px; top:" + posY + "px;")
 
 
                             }
@@ -284,7 +280,7 @@
 
                         var newNode = JSON.clone(emptyNode);
                         newNode.id = ++lastNodeID;
-                        newNode.name = "Node #" + lastNodeID;
+                        newNode.name = "";
                         newNode.isLeaf = true;
                         newNode.x = rx;
                         newNode.y = ry;
@@ -303,7 +299,7 @@
 
                         update(root);
 
-                        edit(elm, newNode, i, _x,_y)
+                        edit(elm, newNode, i, _x,_y, rx, ry)
 
                     }
                 }
@@ -349,7 +345,7 @@
 
                                 var newNode = JSON.clone(emptyNode);
                                 newNode.id = ++lastNodeID;
-                                newNode.name = "Node #" + lastNodeID;
+                                newNode.name = "";
                                 newNode.x = nn.x + initialDistance * Math.sin( angle );
                                 newNode.y = nn.y + initialDistance * Math.cos( angle ) ;
 
@@ -383,7 +379,7 @@
                 },
                 {
                     title: 'Edit node',
-                    action: function(elm, d, i, _x,_y) { edit(elm, d, i, _x,_y); }
+                    action: function(elm, d, i, _x,_y, rx, ry) { edit(elm, d, i, _x,_y, rx, ry); }
 
                 },
                 {
@@ -784,8 +780,6 @@
 
                     fontSize = computedStyle(d3.select(_text ).node() , "fontSize")  || "10";
 
-                    console.log ( computedStyle(d3.select(_text ).node() , "fontSize")  )
-
                     fontSize =  parseInt( fontSize )
 
                     textSize = _text.getBBox();
@@ -828,7 +822,7 @@
 
 
                 if (enableEdit && document.getElementById( resultsID )) {
-                    // console.log(filterAll(root));
+
                         document.getElementById( resultsID ).value = JSON.stringify(filterAll( nodesData ));
                 }
 
@@ -1026,8 +1020,6 @@
 
                             for (_j = 0; _j < childs.length; _j++) {
                                 currentChild = childs[_j];
-
-                                //console.log(currentNode.name + ", numChilds=" +  childs.length +", index=" + _j + " name=" +currentChild.name +" id=" + currentChild.id );
 
                                 if (currentChild.id == id) {
                                     console.log("Found, removing ");
