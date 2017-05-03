@@ -12,260 +12,208 @@
  *
  */
 
-  .d3-x-axis path,
-  .d3-y-axis path,
-  .d3-x-axis line,
-  .d3-y-axis line {
+.d3-x-axis path,
+.d3-y-axis path,
+.d3-x-axis line,
+.d3-y-axis line {
     fill: none;
     stroke: #fff;
-  }
-
-  .d3-x-axis text,
-  .d3-y-axis text {
-    fill:black;
-    font-size:10px;
-  }
-
-   .d3-mindmap-link {
-
-        fill: #000000;
-        stroke: #666;
-        stroke-width: 1.5px;
-        pointer-events: none;
-    }
-
-
-
-
-    rect {
-
-        fill: #ffffff;
-        stroke: #45454a;
-        stroke-width: 3px;
-    }
-
-    rect.d3-mindmap-hover {
-
-        fill: #ff4d4a;
-        stroke: #45454a;
-        stroke-width: 0px;
-    }
-
-    text {
-
-        font-size: 16px;
-        font-family: 'bw_modelicaregular', "Verdana", Times, serif;
-        font-weight: bold;
-        pointer-events: none;
-        fill: #000000;
-        stroke-width: 0px;
-        cursor: hand;
-
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
-
-
-
-    text.d3-mindmap-hover {
-
-        font-weight: bold;
-        pointer-events: none;
-        fill: #ffffff;
-        stroke-width: 0px;
-        cursor: hand;
-
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
-
-    .d3-mindmap-little-button
-    {
-        background-color: #ffffff;
-        border: 3px solid #45454a;
-        border-radius: 20px;
-        padding: 0px;
-        width: 80px;
-        height: 30px;
-        font-size: 12px;
-
-        margin-right: 5px;
-        margin-bottom:5px;
-        color: #45454a;
-        outline: none;
-
-    }
-
-    .d3-mindmap-little-button:hover {
-
-        background-color: #ff4d4a;
-        border: 3px solid #ff4d4a;
-        color: #ffffff;
-
-    }
-
-    #d3-mindmap-zoom-controls
-    {
-        position:absolute;
-        right:5px;
-        top:5px;
-        width:85px;
-        background-color:transparent;
-    }
-
-    #d3-mindmap-help-controls
-    {
-        position:absolute;
-        left:5px;
-        top:5px;
-        width:85px;
-        background-color:transparent;
-    }
-
-
-
-    #d3-mindmap-node-editor .inner {
-
-        width: 190px;
-        margin: 5px;
-    }
-
-    #d3-mindmap-node-editor .d3-mindmap-node-editor-title {
-        height: 50px;
-    }
-
-
-   #d3-mindmap-details, #d3-mindmap-node-editor {
-        position: absolute;
-        width: 290px;
-        background: #c0c0c0;
-        opacity: 0.9;
-        padding: 10px;
-        border: 1px solid #ff4d4a;
-        border-radius: 15px;
-    }
-
-    #d3-mindmap-node-editor span {
-        font-family: 'bw_modelicaregular', "Verdana", Times, serif;
-    }
-
-    #d3-mindmap-node-editor form {
-        border: 0px;
-        width: 100%;
-    }
-
-    #d3-mindmap-node-editor textarea {
-        border: 1px solid #ff4d4a;
-        border-radius: 15px;
-        width: 85%;
-        height: 100px;
-        padding: 10px;
-        margin: 5px;
-        outline: none;
-        resize: none;
-        font-family: 'bw_modelicaregular', "Verdana", Times, serif;
-        color:#000000;
-    }
-
-    #d3-mindmap-node-editor input {
-        border: 1px solid #ff4d4a;
-        border-radius: 15px;
-        width: 85%;
-        padding: 10px;
-        outline: none;
-        margin: 5px;
-        font-family:'bw_modelicaregular',"Verdana", Times, serif;
-        color:#000000;
-    }
-
-    .d3-mindmap-parent {
-        stroke: #00ff00;
-    }
-
-
-    .d3-mindmap-leaf {
-        stroke: #00ffff;
-    }
-
-
-    .d3-mindmap-hyperlink {
-
-        font-style: italic;
-        fill: #ff4d4a;
-    }
-
-
-
-    .d3-context-menu {
-        position: absolute;
-        display: none;
-        background-color: #f2f2f2;
-        border-radius: 4px;
-
-        font-family: 'bw_modelicaregular', "Verdana", Times, serif;
-        font-size: 14px;
-        min-width: 150px;
-        border: 1px solid #d4d4d4;
-
-        z-index: 1200;
-    }
-
-    .d3-context-menu ul {
-        list-style-type: none;
-        margin: 4px 0px;
-        padding: 0px;
-        cursor: default;
-    }
-
-    .d3-context-menu ul li {
-        padding: 4px 16px;
-    }
-
-    .d3-context-menu ul li:hover {
-        background-color: #4677f8;
-        color: #fefefe;
-    }
-
-
-    .d3-mindmap-svg {
-        border: 1px solid #ff4d4a;
-        background-color:#eaeaea;
-    }
-
-
-    .d3-mindmap-button {
-        background-color: #ffffff;
-        border: 3px solid #45454a;
-        border-radius: 20px;
-        padding: 0px;
-        font-size: 16px;
-        width: 158px;
-        height: 40px;
-        margin: 0px;
-        color: #45454a;
-        outline: none;
-    }
-
-    .d3-mindmap-button:hover {
-        background-color: #ff4d4a;
-        border: 3px solid #ff4d4a;
-        border-radius: 20px;
-        padding: 0px;
-        font-size: 16px;
-        width: 158px;
-        height: 40px;
-        margin: 0px;
-        color: #ffffff;
-        outline: none;
-    }
-
-
-    .grid  {
-        stroke-opacity:0.4;
-        stroke-width: 1px;
-        stroke:black;
-    }
+}
+.d3-x-axis text,
+.d3-y-axis text {
+    fill: black;
+    font-size: 10px;
+}
+.d3-mindmap-link {
+    fill: #000000;
+    stroke: #666;
+    stroke-width: 1.5px;
+    pointer-events: none;
+}
+rect {
+    rx: 20px !important;
+    ry: 20px !important;
+    fill: #ffffff;
+    stroke: #45454a;
+    stroke-width: 3px;
+}
+rect.d3-mindmap-hover {
+    fill: #ff4d4a;
+    stroke: #ff4d4a;
+    stroke-width: 3px;
+}
+text {
+    padding: 0;
+    font-weight: bold;
+    font-size: 16px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+    font-family: 'bw_modelicaregular', "Verdana", Times, serif;
+    pointer-events: none;
+    fill: #45454a;
+    stroke-width: 0px;
+    cursor: hand;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+text.d3-mindmap-hover {
+    font-weight: bold;
+    pointer-events: none;
+    fill: #ffffff;
+    stroke-width: 0px;
+    cursor: hand;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.d3-mindmap-little-button {
+    background-color: #ffffff;
+    border: 3px solid #45454a;
+    border-radius: 20px;
+    padding: 0px;
+    width: 80px;
+    height: 30px;
+    font-size: 12px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    color: #45454a;
+    outline: none;
+}
+.d3-mindmap-little-button:hover {
+    background-color: #ff4d4a;
+    border: 3px solid #ff4d4a;
+    color: #ffffff;
+}
+#d3-mindmap-zoom-controls {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 85px;
+    background-color: transparent;
+}
+#d3-mindmap-help-controls {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    width: 85px;
+    background-color: transparent;
+}
+#d3-mindmap-node-editor .inner {
+    width: 190px;
+    margin: 5px;
+}
+#d3-mindmap-node-editor .d3-mindmap-node-editor-title {
+    height: 50px;
+}
+#d3-mindmap-details,
+#d3-mindmap-node-editor {
+    position: absolute;
+    width: 290px;
+    background: #c0c0c0;
+    opacity: 0.9;
+    padding: 10px;
+    border: 1px solid #ff4d4a;
+    border-radius: 15px;
+}
+#d3-mindmap-node-editor span {
+    font-family: 'bw_modelicaregular', "Verdana", Times, serif;
+}
+#d3-mindmap-node-editor form {
+    border: 0px;
+    width: 100%;
+}
+#d3-mindmap-node-editor textarea {
+    border: 1px solid #ff4d4a;
+    border-radius: 15px;
+    width: 85%;
+    height: 100px;
+    padding: 10px;
+    margin: 5px;
+    outline: none;
+    resize: none;
+    font-family: 'bw_modelicaregular', "Verdana", Times, serif;
+    color: #000000;
+}
+#d3-mindmap-node-editor input {
+    border: 1px solid #ff4d4a;
+    border-radius: 15px;
+    width: 85%;
+    padding: 10px;
+    outline: none;
+    margin: 5px;
+    font-family: 'bw_modelicaregular', "Verdana", Times, serif;
+    color: #000000;
+}
+.d3-mindmap-parent {
+    stroke: #ff4d4a;
+}
+.d3-mindmap-leaf {
+    stroke: #45454a;
+}
+.d3-mindmap-hyperlink {
+    font-style: italic;
+    fill: #ff4d4a;
+}
+.d3-context-menu {
+    position: absolute;
+    display: none;
+    background-color: #f2f2f2;
+    border-radius: 4px;
+    font-family: 'bw_modelicaregular', "Verdana", Times, serif;
+    font-size: 14px;
+    min-width: 150px;
+    border: 1px solid #d4d4d4;
+    z-index: 1200;
+}
+.d3-context-menu ul {
+    list-style-type: none;
+    margin: 4px 0px;
+    padding: 0px;
+    cursor: default;
+}
+.d3-context-menu ul li {
+    padding: 4px 16px;
+}
+.d3-context-menu ul li:hover {
+    background-color: #4677f8;
+    color: #fefefe;
+}
+.d3-mindmap-svg {
+    border: 1px solid #ff4d4a;
+    background-color: #eaeaea;
+}
+.d3-mindmap-button {
+    background-color: #ffffff;
+    border: 3px solid #45454a;
+    border-radius: 20px;
+    padding: 0px;
+    font-size: 16px;
+    width: 158px;
+    height: 40px;
+    margin: 0px;
+    color: #45454a;
+    outline: none;
+}
+.d3-mindmap-button:hover {
+    background-color: #ff4d4a;
+    border: 3px solid #ff4d4a;
+    border-radius: 20px;
+    padding: 0px;
+    font-size: 16px;
+    width: 158px;
+    height: 40px;
+    margin: 0px;
+    color: #ffffff;
+    outline: none;
+}
+.grid {
+    stroke-opacity: 0.4;
+    stroke-width: 1px;
+    stroke: black;
+}

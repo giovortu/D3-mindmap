@@ -128,7 +128,7 @@
                 initialDistance = ( options && options.initialDistance ) || 150,
                 textXMargin     = ( options && options.textXMargin ) ||  10,
                 textYMargin     = ( options && options.textYMargin ) || 10,
-                boxRadius       = ( options && options.boxRadius ) || 20,
+
                 enableEdit      = ( options && options.editable ) ,
                 containerID     = ( options && options.container ) || "cont",
                 resultsID       = ( options && options.results ) || "result",
@@ -695,8 +695,6 @@
                 var rect = nodeEnter.append("rect")
                     .attr("x", 0)
                     .attr("y", 0)
-                    .attr("rx", boxRadius)
-                    .attr("ry", boxRadius)
                     .attr("height", rectHeight)
                     .attr("width", rectWidth)
                     .attr("id", function(d) {
