@@ -1,5 +1,7 @@
 /*  GIOVORTU */
 
+
+
    d3.mindMap = function (options) {
 
 
@@ -106,7 +108,10 @@
                 scale = 1,
                 linkWeight = 2
                 shiftClicked = false,
-                ctrlClicked = false
+                ctrlClicked = false,
+                fontSize = 10
+
+
 
             /*parameters*/
             var _width           = ( options && options.width ) || 960,
@@ -115,7 +120,6 @@
                 textXMargin     = ( options && options.textXMargin ) ||  10,
                 textYMargin     = ( options && options.textYMargin ) || 10,
                 boxRadius       = ( options && options.boxRadius ) || 20,
-                fontSize        = ( options && options.fontSize ) || 12,
                 enableEdit      = ( options && options.editable ) ,
                 containerID     = ( options && options.container ) || "cont",
                 resultsID       = ( options && options.results ) || "result",
@@ -707,10 +711,8 @@
 
                 var txt = nodeEnter.append("text")
 
-
                     .attr("class", "text")
                     .style("text-anchor", "middle")
-                    .style("font-size", fontSize + "px")
                     .attr("id", function(d) {
                         return "JIKU_MM_TEXT_" + d.id;
                     })
@@ -777,6 +779,12 @@
                     _rect = childs[0];
                     _text = childs[1];
 
+                    fontSize = computedStyle(d3.select(_text ).node() , "fontSize")  || "10";
+
+                    console.log ( computedStyle(d3.select(_text ).node() , "fontSize")  )
+
+                    fontSize =  parseInt( fontSize )
+
                     textSize = _text.getBBox();
 
                     w = textSize.width + 2 * textXMargin;
@@ -786,7 +794,7 @@
                     _rect.setAttribute("x", -w / 2);
                     _rect.setAttribute("y", -h / 2);
 
-                    _text.setAttribute("y", textYMargin/2 -h / 2 + fontSize / 2.5);
+                    _text.setAttribute("y",  -h / 2 + fontSize );
 
                     _rect.setAttribute("width", w)
                     _rect.setAttribute("height", h)
@@ -1510,7 +1518,13 @@
 
                     str.forEach( function( elem ){
 
-                    div.append("span").text( elem );
+                    st = elem ;
+                    if ( he )
+                    {
+                      st = he.decode(elem)
+                    }
+
+                    div.append("span").text( st );
                     div.append("br")
                     });
 
@@ -1576,6 +1590,32 @@
                 view.y += center[1] - l[1];
 
                 interpolateZoom([view.x, view.y], view.k);
+            }
+
+            // DEV: We don't use var but favor parameters since these play nicer with minification
+            function computedStyle(el, prop, getComputedStyle, style) {
+              getComputedStyle = window.getComputedStyle;
+              style =
+                  // If we have getComputedStyle
+                  getComputedStyle ?
+                    // Query it
+                    // TODO: From CSS-Query notes, we might need (node, null) for FF
+                    getComputedStyle(el) :
+
+                  // Otherwise, we are in IE and use currentStyle
+                    el.currentStyle;
+              if (style) {
+                return style
+                [
+                  // Switch to camelCase for CSSOM
+                  // DEV: Grabbed from jQuery
+                  // https://github.com/jquery/jquery/blob/1.9-stable/src/css.js#L191-L194
+                  // https://github.com/jquery/jquery/blob/1.9-stable/src/core.js#L593-L597
+                  prop.replace(/-(\w)/gi, function (word, letter) {
+                    return letter.toUpperCase();
+                  })
+                ];
+              }
             }
 
 
