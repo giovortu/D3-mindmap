@@ -1,7 +1,16 @@
-/*  GIOVORTU */
-
-
-
+/**
+ * d3.mindmap.js
+ *
+ * A D3 plugin to display and edit mind maps
+ *
+ * @license GPLV3, magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&dn=gpl-3.0.txt
+ * @version 0.1
+ * @author  Ortu Giovanni, https://www.giovanniortu.it, https://github.com/giovortu/D3-mindmap
+ * @updated 2017-05-3
+ * @link    https://github.com/giovortu/D3-mindmap
+ *
+ *
+ */
    d3.mindMap = function (options) {
 
 
